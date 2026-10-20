@@ -237,3 +237,42 @@ def test_humans_from_data_keep_the_human_rig(rig_report):
 def test_schema_lists_the_generic_sets():
     assert {"estudio", "mostrador", "exterior"} <= {s.value for s in Set}
     assert not schema.SET_CAST["mostrador"].requires
+
+
+def _casting():
+    import importlib.util
+
+    path = ROOT / ".claude" / "skills" / "personaje" / "casting.py"
+    spec = importlib.util.spec_from_file_location("casting_under_test", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_casting_without_key_says_to_do_it_on_the_web(monkeypatch, tmp_path):
+    mod = _casting()
+    monkeypatch.setattr(mod, "ROOT", tmp_path)  # no .env here
+    monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
+    with pytest.raises(SystemExit) as e:
+        mod._key()
+    msg = str(e.value)
+    assert "Voice Library" in msg and "voice_id" in msg and "personaje.json" in msg
+
+
+@pytest.mark.parametrize("status", [401, 402, 403])
+def test_casting_free_plan_says_to_do_it_on_the_web(monkeypatch, status):
+    mod = _casting()
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "sk-test")
+
+    class R:
+        status_code = status
+        text = "payment_required"
+
+        def raise_for_status(self):
+            raise AssertionError("must not get here")
+
+    monkeypatch.setattr(mod.httpx, "get", lambda *a, **k: R())
+    args = type("A", (), {"n": 5, "genero": None, "acento": None, "edad": None, "texto": None, "uso": None})()
+    with pytest.raises(SystemExit) as e:
+        mod.cmd_buscar(args)
+    assert "Voice Library" in str(e.value) and str(status) in str(e.value)

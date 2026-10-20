@@ -64,6 +64,8 @@ def files(spec: dict, cfg: dict) -> list[Path]:
     skip = list(spec.get("excluir", []))
     if spec.get("solo_tuyos"):
         skip += [f"*/{e}/*" for e in cfg.get("ejemplos", [])] + [f"*/{e}.*" for e in cfg.get("ejemplos", [])]
+    if spec.get("sin_personajes_ejemplo"):
+        skip += [f"personajes/{e}/*" for e in cfg.get("personajes_ejemplo", [])]
     rel = lambda p: p.relative_to(ROOT).as_posix()  # noqa: E731
     return [p for p in out if not any(fnmatch.fnmatch(rel(p), s) for s in skip)]
 
@@ -309,6 +311,11 @@ def c_sistema(s, cfg):
     return None
 
 
+def ejemplo_carpeta() -> str:
+    """A short folder that exists as an example on THIS system (no C:\\ on Linux or Mac)."""
+    return "C:\\fabrica" if sys.platform.startswith("win") else "~/fabrica"
+
+
 def c_carpeta(s, cfg):
     path = str(ROOT)
     cloud = next((c for c in CLOUDS if c.lower() in path.lower()), None)
@@ -317,9 +324,9 @@ def c_carpeta(s, cfg):
     if not cloud and sys.platform.startswith("win") and od and path.lower().startswith(od.rstrip("\\/").lower()):
         cloud = "OneDrive"
     if cloud:
-        return f"Tu fábrica está dentro de {cloud} ({path}): la sincronización rompe los renders. Muévela a una carpeta corta fuera de la nube (p. ej. C:\\fabrica o ~/fabrica)."
+        return f"Tu fábrica está dentro de {cloud} ({path}): la sincronización rompe los renders. Muévela a una carpeta corta fuera de la nube (p. ej. {ejemplo_carpeta()})."
     if len(path) > MAX_PATH:
-        return f"La ruta de tu fábrica es muy larga ({len(path)} caracteres): muévela a una carpeta corta (p. ej. C:\\fabrica o ~/fabrica)."
+        return f"La ruta de tu fábrica es muy larga ({len(path)} caracteres): muévela a una carpeta corta (p. ej. {ejemplo_carpeta()})."
     return None
 
 

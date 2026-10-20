@@ -1,11 +1,17 @@
 {
- "_ayuda": "Una comprobación por lote del temario v2: la ÚNICA fuente de verdad de los entregables. La lee .claude/skills/tarrito/comprobar.py: dentro de tu fábrica, /tarrito comprobar [lote]; antes de instalar, /fabrica:tarrito comprobar (que, si la fábrica ya existe, delega en ese mismo script). Tipos: archivo, video, json, jsonl, sin_huecos, items, titulos, contiene, no_contiene, regex, tabla, pregunta, sistema, carpeta, sin_api_key, doctor, comando, lotes. «solo_tuyos» ignora los episodios de ejemplo (lista «ejemplos»). Sellos en curso/progreso.json.",
+ "_ayuda": "Una comprobación por lote del temario v2: la ÚNICA fuente de verdad de los entregables. La lee .claude/skills/tarrito/comprobar.py: dentro de tu fábrica, /tarrito comprobar [lote]; antes de instalar, /fabrica:tarrito comprobar (que, si la fábrica ya existe, delega en ese mismo script). Tipos: archivo, video, json, jsonl, sin_huecos, items, titulos, contiene, no_contiene, regex, tabla, pregunta, sistema, carpeta, sin_api_key, doctor, comando, lotes. «solo_tuyos» ignora los episodios de ejemplo (lista «ejemplos»); «sin_personajes_ejemplo» ignora los personajes que trae la plantilla (lista «personajes_ejemplo»). Sellos en curso/progreso.json.",
  "version": 2,
  "ejemplos": [
   "humo",
   "ejemplo-*",
   "lampara-de-las-tres",
   "cafeteria-moka"
+ ],
+ "personajes_ejemplo": [
+  "lucio",
+  "estudiante",
+  "barista",
+  "moka"
  ],
  "lotes": [
   {
@@ -343,7 +349,7 @@
    "comprobaciones": [
     {
      "tipo": "json",
-     "ruta": "personajes/*/personaje.json",
+     "ruta": "personajes/*/personaje.json", "sin_personajes_ejemplo": true,
      "campos_no_vacios": [
       "id",
       "role",
@@ -353,7 +359,7 @@
     },
     {
      "tipo": "archivo",
-     "ruta": "personajes/*/fotograma.png",
+     "ruta": "personajes/*/fotograma.png", "sin_personajes_ejemplo": true,
      "min_bytes": 5000,
      "falta": "Falta el fotograma de tu personaje (personajes/<id>/fotograma.png): /personaje lo saca con `uv run reels personaje <id>`."
     }
@@ -368,7 +374,7 @@
    "comprobaciones": [
     {
      "tipo": "json",
-     "ruta": "personajes/*/personaje.json",
+     "ruta": "personajes/*/personaje.json", "sin_personajes_ejemplo": true,
      "campos_no_vacios": [
       "voice.voice_id"
      ],
@@ -376,7 +382,7 @@
     },
     {
      "tipo": "archivo",
-     "ruta": "personajes/*/casting.md",
+     "ruta": "personajes/*/casting.md", "sin_personajes_ejemplo": true,
      "falta": "Falta el casting (personajes/<id>/casting.md con las 6 frases de prueba): /personaje lo prepara."
     }
    ],

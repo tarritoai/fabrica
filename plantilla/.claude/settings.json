@@ -13,6 +13,7 @@
       "Bash(uv run reels personaje:*)",
       "Bash(uv run reels review:*)",
       "Bash(uv run reels humo:*)",
+      "Bash(uv run reels ejemplo:*)",
       "Bash(uv run python .claude/skills/episodio/estimar_voz.py:*)",
       "Bash(uv run python .claude/skills/tarrito/comprobar.py:*)",
       "Bash(uv run python .claude/skills/personaje/casting.py buscar:*)",

@@ -1,7 +1,7 @@
 {
   "name": "fabrica",
   "displayName": "La fábrica",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Instala tu fábrica de reels sin permisos de administrador (/fabrica:instalar), te ayuda cuando algo falla (/fabrica:tarrito) y la mantiene al día sin tocar tu memoria (/fabrica:actualizar).",
   "author": {
     "name": "tarritoai",

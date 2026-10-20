@@ -19,9 +19,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from fabrica_lib import ajustes, comprobar, diagnostico, herramientas, plantilla  # noqa: E402
-from fabrica_lib.comun import (FabricaError, Log, candado, carpeta_cache, decir, despierto, ejecutar, entorno_limpio,  # noqa: E402
-                               espacio_libre_gb, glibc, leer_json, linux_distro, memoria_gb, plataforma,
-                               setup_console, sistema, titulo, version_plugin, version_tupla)
+from fabrica_lib.comun import (FabricaError, Log, ResumenUv, candado, carpeta_cache, decir, despierto, ejecutar,  # noqa: E402
+                               entorno_limpio, espacio_libre_gb, glibc, leer_json, linux_distro, memoria_gb, plataforma,
+                               resumen_remotion, setup_console, sistema, titulo, version_plugin, version_tupla)
 
 MIN_GB, AVISO_GB = 8, 15
 SINCRONIZADAS = ("OneDrive", "iCloud", "Mobile Documents", "Dropbox", "Google Drive", "GoogleDrive", "Box Sync")
@@ -227,7 +227,7 @@ def cmd_dependencias(a: argparse.Namespace) -> int:
     env.setdefault("UV_SYSTEM_CERTS", "1")
     with despierto("instalando las piezas de la fábrica"):
         decir("Python 3.12 y sus librerías (uv sync)…", "→")
-        r = ejecutar([_uv(), "sync"], cwd=p, env=env, timeout=1800, mostrar=True)
+        r = ejecutar([_uv(), "sync"], cwd=p, env=env, timeout=1800, mostrar=True, traducir=ResumenUv())
         if r.returncode != 0:
             raise FabricaError("no se han podido instalar las piezas de Python (uv sync)", "uv-sin-python")
         decir("Python listo", "✔")
@@ -245,7 +245,8 @@ def cmd_dependencias(a: argparse.Namespace) -> int:
             decir("Remotion listo", "✔")
         decir("navegador invisible para montar los vídeos…", "→")
         cli = remotion / "node_modules" / "@remotion" / "cli" / "remotion-cli.js"
-        r = ejecutar([str(node), str(cli), "browser", "ensure"], cwd=remotion, env=env_node, timeout=900, mostrar=True)
+        r = ejecutar([str(node), str(cli), "browser", "ensure"], cwd=remotion, env=env_node, timeout=900, mostrar=True,
+                     traducir=resumen_remotion)
         if r.returncode != 0:
             decir("no he podido preparar el navegador ahora; Remotion lo intentará solo en el primer montaje", "!")
         else:
@@ -405,7 +406,7 @@ def cmd_actualizar(a: argparse.Namespace) -> int:
     cambiados = set(plan["nuevos"] + plan["actualizar"])
     if cambiados & {"pyproject.toml", "uv.lock"}:
         decir("Cambiaron las piezas de Python: uv sync…", "→")
-        ejecutar([_uv(), "sync"], cwd=p, env=entorno_limpio(), timeout=1800, mostrar=True)
+        ejecutar([_uv(), "sync"], cwd=p, env=entorno_limpio(), timeout=1800, mostrar=True, traducir=ResumenUv())
     if cambiados & {"remotion/package.json", "remotion/package-lock.json"}:
         node, npm = _node_y_npm(p)
         decir("Cambiaron las piezas de Remotion: npm ci…", "→")

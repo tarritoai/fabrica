@@ -32,14 +32,30 @@ MODEL = "eleven_v4"
 CREDITS_PER_CHAR = 0.45  # v4, medido en la cuenta del curso (oct. 2026); `saldo` antes y después da la cifra real
 
 
+def hazlo_en_la_web(motivo: str) -> str:
+    """Spanish message for the student when the API route to the Voice Library is closed."""
+    return (f"{motivo}\n\nNo pasa nada: haz el casting en la web de ElevenLabs, que es gratis.\n"
+            "  1. Entra en elevenlabs.io → Voices → Voice Library y escucha voces (filtra por idioma, acento y edad).\n"
+            "  2. Elige la que te guste y pulsa «Add to My Voices». Copia su voice_id (menú de la voz → Copy voice ID).\n"
+            "  3. Vuelve aquí y dile a Claude: «guarda esta voz para <personaje>: <voice_id>». La fábrica la apunta en\n"
+            "     personajes/<id>/personaje.json (voice.voice_id y voice.name) y ya está lista para narrar.")
+
+
 def _key() -> str:
     from dotenv import load_dotenv
 
     load_dotenv(ROOT / ".env")
     key = os.environ.get("ELEVENLABS_API_KEY")
     if not key:
-        sys.exit("Falta ELEVENLABS_API_KEY en .env (elevenlabs.io → Developers → API keys).")
+        sys.exit(hazlo_en_la_web("Aún no hay clave de ElevenLabs en .env (ELEVENLABS_API_KEY)."))
     return key
+
+
+def _plan_sin_biblioteca(r) -> bool:
+    """401/402/403 from ElevenLabs: key without permission or a plan that cannot use library voices through the API."""
+    if r.status_code not in (401, 402, 403):
+        return False
+    return True
 
 
 def _h() -> dict:
@@ -74,6 +90,9 @@ def cmd_buscar(a) -> None:
         if v:
             params[k] = v
     r = httpx.get(f"{API}/shared-voices", params=params, headers=_h(), timeout=30)
+    if _plan_sin_biblioteca(r):
+        sys.exit(hazlo_en_la_web("Tu cuenta de ElevenLabs no deja buscar voces de la biblioteca desde fuera de la web "
+                                 f"(HTTP {r.status_code}: suele pasar con el plan gratis o con una clave sin permisos)."))
     r.raise_for_status()
     voices = r.json()["voices"]
     cache = ROOT / ".cache" / "casting-busqueda.json"
@@ -102,6 +121,8 @@ def _add(voice_id: str, meta: dict) -> None:
     if not owner:
         sys.exit(f"{voice_id}: no sé de quién es; búscala antes con `buscar` (o añádela a My Voices en la web).")
     r = httpx.post(f"{API}/voices/add/{owner}/{voice_id}", headers=_h(), json={"new_name": meta.get("name", voice_id)[:40]}, timeout=30)
+    if _plan_sin_biblioteca(r):
+        sys.exit(hazlo_en_la_web(f"Tu plan de ElevenLabs no deja añadir voces de la biblioteca desde fuera de la web (HTTP {r.status_code})."))
     if r.status_code not in (200, 201):
         sys.exit(f"No he podido añadir {voice_id} a My Voices: HTTP {r.status_code} {r.text[:200]}")
 

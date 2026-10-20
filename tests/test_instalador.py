@@ -10,6 +10,7 @@ import http.server
 import io
 import json
 import os
+import subprocess
 import sys
 import tarfile
 import threading
@@ -23,7 +24,8 @@ sys.path.insert(0, str(RAIZ / "plugin" / "scripts"))
 
 import fabrica  # noqa: E402
 from fabrica_lib import ajustes, comprobar, descargas, diagnostico, herramientas, plantilla  # noqa: E402
-from fabrica_lib.comun import FabricaError  # noqa: E402
+from fabrica_lib import comun  # noqa: E402
+from fabrica_lib.comun import FabricaError, Log, resumen_remotion  # noqa: E402
 
 # --- a tiny HTTP server with Range support (resume) ------------------------------------------------------------------
 
@@ -444,3 +446,54 @@ def test_candado_impide_dos_instalaciones_a_la_vez(tmp_path):
     with candado(tmp_path):
         assert (tmp_path / ".fabrica" / "en-marcha.lock").exists()
     assert not (tmp_path / ".fabrica" / "en-marcha.lock").exists()
+
+
+# --- English output of uv and Remotion is summarised in Spanish -------------------------------------------------------
+
+
+def test_resumen_de_uv_en_espanol():
+    r = comun.ResumenUv()
+    crudo = ["Using CPython 3.12.3", "Downloading cpython-3.12.3-linux-x86_64 (32.0MiB)", "Resolved 41 packages in 2ms",
+             "Downloading numpy (16.0MiB)", " + numpy==2.1.0", " + httpx==0.27.0", "Installed 41 packages in 1.2s",
+             "everything's installed! To add to your PATH, run: source $HOME/.local/bin/env"]
+    vistas = [x for x in (r(ln) for ln in crudo) if x]
+    texto = "\n".join(vistas)
+    assert "Python 3.12" in texto and "41 librerías" in texto
+    assert not any(w in texto for w in ("Downloading", "Installed", "everything", " + ", "=="))
+    assert r("error: failed to fetch") == "error: failed to fetch"  # real errors are shown as they are
+
+
+def test_resumen_de_remotion_en_espanol():
+    assert "navegador" in resumen_remotion("Downloading Chrome Headless Shell")
+    assert resumen_remotion("Downloading Chrome Headless Shell (50%)") is None
+    assert "descargado" in resumen_remotion("Got Headless Shell")
+
+
+def test_ejecutar_traduce_en_pantalla_pero_el_log_guarda_todo(tmp_path, capsys):
+    Log.abrir(tmp_path / "instalacion.log")
+    try:
+        r = comun.ejecutar([sys.executable, "-c", "print('Downloading X'); print('Installed 3 packages in 1s')"],
+                           mostrar=True, traducir=comun.ResumenUv())
+    finally:
+        log = (tmp_path / "instalacion.log").read_text(encoding="utf-8")
+        Log.path = None
+    out = capsys.readouterr().out
+    assert "3 librerías" in out and "Installed" not in out
+    assert "Downloading X" in log and "Installed 3 packages" in log and "Downloading X" in r.stdout
+
+
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="fabrica.sh is for Mac and Linux")
+def test_uv_queda_en_el_path_de_terminales_nuevas_sin_duplicar(tmp_path):
+    home = tmp_path / "home"
+    (home / ".local" / "bin").mkdir(parents=True)
+    fake = home / ".local" / "bin" / "uv"
+    fake.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    fake.chmod(0o755)
+    (home / ".bashrc").write_text("# mi bashrc\nalias ll='ls -l'", encoding="utf-8")  # no final newline
+    env = {"HOME": str(home), "PATH": "/usr/bin:/bin"}
+    for _ in range(2):
+        r = subprocess.run(["bash", str(RAIZ / "plugin" / "scripts" / "fabrica.sh"), "estado", "--proyecto", str(tmp_path / "x")],
+                           capture_output=True, text=True, env=env, timeout=120)
+    texto = (home / ".bashrc").read_text(encoding="utf-8")
+    assert texto.count("La Fabrica: uv") == 1 and 'export PATH="$HOME/.local/bin:$PATH"' in texto
+    assert "alias ll='ls -l'\nexport PATH" in texto

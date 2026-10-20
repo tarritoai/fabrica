@@ -64,7 +64,7 @@ Explícaselo en llano y, si hace falta más detalle, busca el `<código>` (colum
 ## Pasos
 
 ### 0. Bienvenida (no ejecutes nada todavía)
-En 3–4 líneas: vamos a montar tu fábrica; tarda entre 30 y 60 minutos (casi todo es esperar descargas, unos 1,5 GB; ocupará unos 5 GB);
+En 3–4 líneas: vamos a montar tu fábrica; tarda entre 30 y 60 minutos (casi todo es esperar descargas, unos 1,5 GB; ocupará unos 3,5 GB);
 no pide contraseñas; puedes seguir usando el ordenador; si es un portátil, **enchúfalo**. Al final verás tu primer
 vídeo. Pregunta si empezamos.
 

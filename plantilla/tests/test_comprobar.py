@@ -74,3 +74,52 @@ def test_cloud_folder_fails(tmp_path, monkeypatch):
     assert "Dropbox" in mod.c_carpeta({}, {})
     monkeypatch.setattr(mod, "ROOT", tmp_path / "fabrica")
     assert mod.c_carpeta({}, {}) is None or len(str(tmp_path)) > mod.MAX_PATH
+
+
+def test_cloud_and_long_folder_examples_match_the_system(tmp_path, monkeypatch):
+    mod = _module()
+    monkeypatch.setattr(mod, "ROOT", tmp_path / "Dropbox" / "fabrica")
+    monkeypatch.setattr(sys, "platform", "linux")
+    msg = mod.c_carpeta({}, {})
+    assert "~/fabrica" in msg and "C:" not in msg
+    monkeypatch.setattr(sys, "platform", "darwin")
+    assert "C:" not in mod.c_carpeta({}, {})
+    monkeypatch.setattr(sys, "platform", "win32")
+    assert "C:\\fabrica" in mod.c_carpeta({}, {}) and "~/fabrica" not in mod.c_carpeta({}, {})
+
+
+def _character(p: Path, name: str, voice: bool = False) -> None:
+    folder = p / "personajes" / name
+    folder.mkdir(parents=True, exist_ok=True)
+    data = {"id": name, "role": "cosa", "display_name": name.title()}
+    if voice:
+        data["voice"] = {"voice_id": "abc123"}
+    (folder / "personaje.json").write_text(json.dumps(data), encoding="utf-8")
+    (folder / "fotograma.png").write_bytes(b"\0" * 6000)
+    (folder / "casting.md").write_text("# casting\n", encoding="utf-8")
+
+
+def test_example_characters_do_not_stamp_4_4_and_4_5(tmp_path):
+    p = _project(tmp_path)
+    cfg = json.loads((p / CHECKS).read_text(encoding="utf-8"))
+    assert {"lucio", "estudiante"} <= set(cfg["personajes_ejemplo"])
+    for example in cfg["personajes_ejemplo"]:  # what the template ships, with voice and everything
+        _character(p, example, voice=True)
+    for lot in ("4·4", "4·5"):
+        r = _run(p, lot)
+        assert r.returncode == 1 and f"FALTA · {lot}" in r.stdout, r.stdout
+    _character(p, "tarro", voice=True)  # the student's own
+    for lot in ("4·4", "4·5"):
+        r = _run(p, lot)
+        assert r.returncode == 0 and f"APROBADO · {lot}" in r.stdout, r.stdout
+
+
+def test_template_characters_are_all_listed_as_examples():
+    cfg = json.loads((ROOT / CHECKS).read_text(encoding="utf-8"))
+    shipped = {d.name for d in (ROOT / "personajes").iterdir() if d.is_dir()}
+    assert shipped <= set(cfg["personajes_ejemplo"])
+
+
+def test_reels_ejemplo_is_pre_approved():
+    allow = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))["permissions"]["allow"]
+    assert "Bash(uv run reels ejemplo:*)" in allow

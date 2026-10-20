@@ -733,10 +733,11 @@
     "no he podido instalar uv",
     "no encuentro uv",
     "uv: command not found",
+    "command not found: uv",
     "'uv' is not recognized"
    ],
    "significa": "uv (el ayudante que trae Python) no se ha instalado, casi siempre por la red.",
-   "arreglo": "Repite /fabrica:instalar con internet. A mano: Mac/Linux curl -LsSf https://astral.sh/uv/install.sh | sh · Windows powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"; luego abre una terminal nueva.",
+   "arreglo": "Repite /fabrica:instalar con internet. A mano: Mac/Linux curl -LsSf https://astral.sh/uv/install.sh | sh · Windows powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"; luego abre una terminal nueva. Si uv ya está instalado pero una terminal nueva dice «command not found: uv»: cierra la terminal y abre otra (el instalador deja apuntada la carpeta ~/.local/bin en ~/.bashrc o ~/.zshrc); si sigue igual, añade a ese archivo la línea export PATH=\"$HOME/.local/bin:$PATH\" o cierra sesión y vuelve a entrar.",
    "origen": "documentado"
   },
   {

@@ -26,7 +26,7 @@ De qué va la cuenta: `docs/territorio.md`. Para quién: `docs/publico.md`. Sus 
 ## Las órdenes (skills de `.claude/skills/`)
 | Orden | Para qué |
 |---|---|
-| `/humo` | prueba gratis: un vídeo de 7 s de punta a punta |
+| `/humo` | prueba gratis: un vídeo de unos 6 s de punta a punta |
 | `/nicho` | tu territorio (3 pruebas, verdades mecánicas) y tu público con sus 5 espectadores |
 | `/personaje` | tu personaje en datos, en un fotograma y con voz (casting de 6 frases) |
 | `/ideas` | 5 ideadores → jurado → espectadores + cuidado → 5 finalistas con recomendación |
@@ -88,7 +88,7 @@ Cada corrección de quien manda se apunta en `docs/decisiones.md`; `/revision` l
 
 ## Comandos (todos con `uv run reels …`)
 - `doctor` — ¿está todo instalado? Da el comando exacto para tu sistema; `--prueba-render` mide la velocidad.
-- `humo` — prueba gratis de punta a punta (vídeo de 7 s en `episodes/humo/`). `descargar-modelo` — el modelo de whisper (el "oído" que comprueba).
+- `humo` — prueba gratis de punta a punta (vídeo de unos 6 s en `episodes/humo/`). `descargar-modelo` — el modelo de whisper (el "oído" que comprueba).
 - `personaje <id>` — hoja de expresiones gratis (emociones, bocas, gestos, parpadeo). Enséñala antes de usar uno nuevo.
 - `ejemplo <slug>` — episodios de ejemplo con voz ya grabada (`lampara-de-las-tres`, `cafeteria-moka`), gratis.
 - `lint <slug>` — revisión gratis del guion; antes de cada gasto.

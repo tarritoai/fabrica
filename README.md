@@ -67,7 +67,7 @@ uv sync                              # Python 3.12 + dependencias (uv descarga P
 (cd remotion && npm ci)              # Remotion
 uv run reels descargar-modelo        # modelo de whisper (~470 MB) a models/
 uv run reels doctor                  # todo en verde; si no, el comando exacto para tu SO
-uv run reels humo                    # vídeo de 7 s de punta a punta, gratis, sin cuentas → episodes/humo/final.mp4
+uv run reels humo                    # vídeo de unos 6 s de punta a punta, gratis, sin cuentas → episodes/humo/final.mp4
 uv run pytest -q                     # tests (no usan servicios de pago)
 ```
 

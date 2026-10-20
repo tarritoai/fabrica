@@ -7,10 +7,12 @@ import datetime as _dt
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 OK, AVISO, FALLO, INFO = "✔", "!", "✘", "·"
@@ -165,9 +167,11 @@ def entorno_limpio(extra_path: list[Path] | None = None) -> dict[str, str]:
 
 
 def ejecutar(cmd: list[str], cwd: Path | None = None, env: dict[str, str] | None = None,
-             timeout: float | None = None, mostrar: bool = False, prefijo: str = "    ") -> subprocess.CompletedProcess:
+             timeout: float | None = None, mostrar: bool = False, prefijo: str = "    ",
+             traducir: Callable[[str], str | None] | None = None) -> subprocess.CompletedProcess:
     """Run a program (argument list, never a shell). Its output always goes to the log; with `mostrar`, also to the
-    screen as it happens (long steps: the student sees life). Returns the result with .stdout (text)."""
+    screen as it happens (long steps: the student sees life). `traducir` turns each visible line into what the student
+    sees (Spanish summary) or None to hide it; the log keeps the full original output. Returns the result with .stdout."""
     Log.escribir(f"$ {' '.join(cmd)}" + (f"   (en {cwd})" if cwd else ""))
     if not mostrar:
         try:
@@ -191,6 +195,8 @@ def ejecutar(cmd: list[str], cwd: Path | None = None, env: dict[str, str] | None
         Log.escribir(linea)
         # Progress bars of other tools redraw with \r: keep only what a person can read.
         visible = linea.split("\r")[-1].strip()
+        if traducir and visible:
+            visible = traducir(visible) or ""
         if visible:
             print(prefijo + visible, flush=True)
         if timeout and time.time() - inicio > timeout:
@@ -199,6 +205,51 @@ def ejecutar(cmd: list[str], cwd: Path | None = None, env: dict[str, str] | None
     proc.wait()
     Log.escribir(f"(código de salida {proc.returncode})")
     return subprocess.CompletedProcess(cmd, proc.returncode, "\n".join(lineas), "")
+
+
+class ResumenUv:
+    """`uv sync` speaks English (Downloading..., Installed N packages, + pkg==1.0): say it in Spanish, shortly."""
+
+    def __init__(self) -> None:
+        self.avisado: set[str] = set()
+        self.paquetes = 0
+
+    def _una_vez(self, clave: str, texto: str) -> str | None:
+        if clave in self.avisado:
+            return None
+        self.avisado.add(clave)
+        return texto
+
+    def __call__(self, linea: str) -> str | None:
+        bajo = linea.lower().lstrip()
+        if bajo.startswith("+ "):
+            self.paquetes += 1
+            return self._una_vez("lib", "instalando las librerías de Python (el detalle, en logs/instalacion.log)…")
+        if bajo.startswith("downloading"):
+            if "cpython" in bajo or "python" in bajo.split()[1:2]:
+                return self._una_vez("py", "descargando Python 3.12…")
+            return self._una_vez("dl", "descargando librerías…")
+        if bajo.startswith("installed"):
+            m = re.search(r"installed (\d+) packages?", bajo)
+            return f"{m.group(1)} librerías de Python instaladas" if m else None
+        if bajo.startswith(("using cpython", "creating virtual", "resolved", "prepared", "audited", "built", "building",
+                            "uninstalled", "bytecode", "- ")):
+            return None
+        if re.search(r"error|warning|failed|no se ", bajo):
+            return linea  # what goes wrong must reach the student (and the diagnosis) untouched
+        return None
+
+
+def resumen_remotion(linea: str) -> str | None:
+    """`remotion browser ensure` speaks English (Downloading Chrome Headless Shell... Got Headless Shell)."""
+    bajo = linea.lower()
+    if re.search(r"error|warning|failed", bajo):
+        return linea
+    if bajo.startswith("downloading") and "%" not in bajo:
+        return "descargando el navegador invisible de Remotion (unos 100 MB)…"
+    if bajo.startswith("got "):
+        return "navegador invisible descargado"
+    return None
 
 
 def primera_linea(texto: str) -> str:

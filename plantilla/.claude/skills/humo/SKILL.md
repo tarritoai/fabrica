@@ -1,6 +1,6 @@
 ---
 name: humo
-description: Prueba de humo GRATIS - hace un vídeo de 7 s de punta a punta en tu computadora (guion, escena 3D, render, montaje y comprobación) con una voz ya grabada, sin cuentas ni claves. Sirve para saber que la fábrica funciona. Usar con "/humo", después de instalar o cuando algo deje de funcionar.
+description: Prueba de humo GRATIS - hace un vídeo de unos 6 s de punta a punta en tu computadora (guion, escena 3D, render, montaje y comprobación) con una voz ya grabada, sin cuentas ni claves. Sirve para saber que la fábrica funciona. Usar con "/humo", después de instalar o cuando algo deje de funcionar.
 argument-hint: "[rapido|draft|preview]"
 ---
 
@@ -10,7 +10,7 @@ argument-hint: "[rapido|draft|preview]"
 de voz, ni nube, ni claves.
 
 ## 1. Avisar
-Di en 2 líneas qué va a pasar: "Voy a fabricar un vídeo de 7 segundos de punta a punta en tu computadora. Tarda
+Di en 2 líneas qué va a pasar: "Voy a fabricar un vídeo de unos 6 segundos de punta a punta en tu computadora. Tarda
 entre 2 y 15 minutos según la máquina; puedes mirar cómo avanza."
 
 ## 2. Lanzar
@@ -22,7 +22,7 @@ entre 2 y 15 minutos según la máquina; puedes mirar cómo avanza."
 
 ## 3. Si sale bien
 - Termina con `✔ ¡La fábrica funciona!` y la ruta del vídeo: `episodes/humo/final.mp4`.
-- Comprueba que existe y pesa algo (más de 50 KB) y ábrelo para quien manda con el comando de su sistema
+- Comprueba que existe y pesa algo (al menos 200 KB y 4 s: es lo que pide el lote 1·5) y ábrelo para quien manda con el comando de su sistema
   (macOS `open`, Windows `start ""`, Linux `xdg-open`).
 - Explica en 3 líneas qué ha demostrado: que están bien Blender (el 3D), Remotion (el montaje), ffmpeg (el vídeo) y
   whisper (el oído que comprueba). La voz venía grabada: la de verdad llegará con ElevenLabs.
