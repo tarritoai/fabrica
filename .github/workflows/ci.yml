@@ -1,0 +1,231 @@
+# CI of the factory: validates the plugin, then installs it FOR REAL on Windows, macOS (Apple Silicon) and Linux the
+# way /fabrica:instalar does (no administrator, tools inside the project) and renders the free smoke-test video.
+# Downloads are cached by the hash of the pinned versions (plugin/scripts/fabrica_lib/herramientas.py).
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["fabrica--v*"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    name: Validar plugin y tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar uv y Claude Code
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          curl -fsSL https://claude.ai/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: claude plugin validate (marketplace, plugin y marketplace sin git)
+        run: |
+          claude plugin validate . --strict
+          claude plugin validate plugin --strict
+          mkdir -p "$RUNNER_TEMP/singit/.claude-plugin"
+          cp .claude-plugin/marketplace-sin-git.json "$RUNNER_TEMP/singit/.claude-plugin/marketplace.json"
+          claude plugin validate "$RUNNER_TEMP/singit" --strict
+      - name: Tests del instalador
+        run: uvx --with python-dotenv pytest tests -q
+      - name: Tabla de errores al día
+        run: python3 tools/gen_errores.py --check
+      - name: Tests de la plantilla
+        working-directory: plantilla
+        run: uv run --group dev pytest -q
+      - name: Scripts de arranque (shellcheck y PowerShell)
+        run: |
+          shellcheck plugin/scripts/fabrica.sh
+          # shellcheck disable=SC2016
+          pwsh -NoProfile -Command '$e=$null; [void][System.Management.Automation.Language.Parser]::ParseFile("plugin/scripts/fabrica.ps1",[ref]$null,[ref]$e); if ($e) { $e; exit 1 }'
+          if LC_ALL=C grep -nP '[^\x00-\x7F]' plugin/scripts/fabrica.ps1; then echo "fabrica.ps1 must be ASCII (Windows PowerShell 5.1)"; exit 1; fi
+      - name: Paquete sin git (zip con la plantilla dentro)
+        run: |
+          python3 tools/empaquetar.py
+          mkdir -p "$RUNNER_TEMP/zip" && cd "$RUNNER_TEMP/zip" && unzip -q "$GITHUB_WORKSPACE/dist/fabrica-plugin.zip"
+          claude plugin validate fabrica --strict
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fabrica-plugin-zip
+          path: dist/
+
+  version:
+    name: plugin.json sube de versión
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Comparar con la base
+        env:
+          BASE_PR: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ -n "$BASE_PR" ]; then base="origin/$BASE_PR"
+          elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then base="$BEFORE"
+          else echo "sin base con la que comparar"; exit 0; fi
+          python3 tools/check_version_bump.py "$base"
+
+  instalar:
+    name: Instalar y humo · ${{ matrix.os }}${{ matrix.tilde && ' · María José' || '' }}
+    needs: validar
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-14, ubuntu-22.04, ubuntu-24.04]
+        tilde: [false]
+        include:
+          # A user and a project folder with a space and accents, where the risk is (third-party C++ tools on Windows).
+          - os: windows-latest
+            tilde: true
+          - os: ubuntu-24.04
+            tilde: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Carpetas del alumno (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ "${{ matrix.tilde }}" = "true" ]; then
+            home="$RUNNER_TEMP/home/María José"; mkdir -p "$home"
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"   # in case uv was already installed for the runner user
+            echo "HOME=$home" >> "$GITHUB_ENV"
+            echo "PROYECTO=$home/mi fábrica" >> "$GITHUB_ENV"
+            echo "$home/.local/bin" >> "$GITHUB_PATH"
+          else
+            echo "PROYECTO=$RUNNER_TEMP/alumno/fabrica" >> "$GITHUB_ENV"
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          fi
+          echo "FABRICA_CACHE=$RUNNER_TEMP/fabrica-cache" >> "$GITHUB_ENV"
+      - name: Carpetas del alumno (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          w() { printf '%s\n' "$1" >> "$2"; }
+          if [ "${{ matrix.tilde }}" = "true" ]; then
+            home="$(cygpath -w "$RUNNER_TEMP")\Users\María José"
+            mkdir -p "$(cygpath -u "$home")/AppData/Local" "$(cygpath -u "$home")/AppData/Roaming"
+            w "USERPROFILE=$home" "$GITHUB_ENV"; w "HOME=$home" "$GITHUB_ENV"
+            w "LOCALAPPDATA=$home\AppData\Local" "$GITHUB_ENV"; w "APPDATA=$home\AppData\Roaming" "$GITHUB_ENV"
+            w "PROYECTO=$home\mi fábrica" "$GITHUB_ENV"
+            w "$home\.local\bin" "$GITHUB_PATH"
+            w "$USERPROFILE\.local\bin" "$GITHUB_PATH"   # the uv installer may still use the runner's profile
+          else
+            w 'PROYECTO=C:\fabrica' "$GITHUB_ENV"
+            w "$USERPROFILE\.local\bin" "$GITHUB_PATH"
+          fi
+          w "FABRICA_CACHE=$(cygpath -w "$RUNNER_TEMP")\fabrica-cache" "$GITHUB_ENV"
+
+      - name: Caché de descargas
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/fabrica-cache
+          key: fabrica-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('plugin/scripts/fabrica_lib/herramientas.py') }}
+          restore-keys: fabrica-${{ runner.os }}-${{ runner.arch }}-
+
+      # The same steps /fabrica:instalar runs, through the same entry points a student uses.
+      - name: Instalar (Mac / Linux)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set +e
+          bash plugin/scripts/fabrica.sh todo --proyecto "$PROYECTO" --hasta dependencias
+          rc=$?
+          if [ $rc -ne 0 ] && [ "$RUNNER_OS" = "macOS" ] && grep -q "mac-rosetta" "$PROYECTO/logs/instalacion.log"; then
+            echo "::warning::Rosetta no se instala sin administrador en este Mac: hago lo que haría el alumno en Terminal"
+            sudo softwareupdate --install-rosetta --agree-to-license
+            bash plugin/scripts/fabrica.sh todo --proyecto "$PROYECTO" --hasta dependencias; rc=$?
+          fi
+          exit $rc
+      - name: Instalar (Windows PowerShell 5.1, como el alumno)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File plugin\scripts\fabrica.ps1 todo --proyecto "$env:PROYECTO" --hasta dependencias
+          exit $LASTEXITCODE
+
+      - name: reels doctor --json
+        shell: bash
+        working-directory: ${{ env.PROYECTO }}
+        run: |
+          uv run reels doctor --skip-api --json > doctor.json || true
+          cat doctor.json
+          uv run python -c "import json,sys; d=json.load(open('doctor.json',encoding='utf-8')); bad=[c for c in d['checks'] if c['status']=='falta']; print(bad or 'doctor ok'); sys.exit(1 if bad or not d['ok'] else 0)"
+
+      - name: reels humo (Cycles en CPU, sin comprobar)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash plugin/scripts/fabrica.sh humo --proyecto "$PROYECTO" --motor cycles --sin-comprobar
+      - name: reels humo (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File plugin\scripts\fabrica.ps1 humo --proyecto "$env:PROYECTO" --motor cycles --sin-comprobar
+          exit $LASTEXITCODE
+
+      - name: El oído (whisper) escucha el vídeo
+        shell: bash
+        working-directory: ${{ env.PROYECTO }}
+        run: uv run reels check humo
+
+      - name: Entregable 1·5 (/fabrica:tarrito comprobar)
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            powershell.exe -NoProfile -ExecutionPolicy Bypass -File plugin/scripts/fabrica.ps1 comprobar 1.5 --proyecto "$PROYECTO"
+          else
+            bash plugin/scripts/fabrica.sh comprobar 1.5 --proyecto "$PROYECTO"
+          fi
+
+      - name: Mac sin Homebrew → whisper.cpp construido aquí (informativo)
+        if: runner.os == 'macOS' && !matrix.tilde
+        continue-on-error: true
+        shell: bash
+        run: |
+          FABRICA_WHISPER_MAC=compilar bash plugin/scripts/fabrica.sh herramientas --proyecto "$PROYECTO" --solo whisper --forzar
+          cd "$PROYECTO" && uv run reels check humo
+
+      - name: Guardar vídeo y registros
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: humo-${{ matrix.os }}${{ matrix.tilde && '-tilde' || '' }}
+          if-no-files-found: warn
+          path: |
+            ${{ env.PROYECTO }}/episodes/humo/final.mp4
+            ${{ env.PROYECTO }}/episodes/humo/*.log
+            ${{ env.PROYECTO }}/doctor.json
+            ${{ env.PROYECTO }}/logs/instalacion.log
+
+  publicar:
+    name: Publicar el zip sin git en la release
+    if: startsWith(github.ref, 'refs/tags/fabrica--v')
+    needs: [validar, instalar]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Empaquetar y subir
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          python3 tools/empaquetar.py
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "$TAG" --notes "Plugin fabrica ${TAG#fabrica--v}"
+          gh release upload "$TAG" dist/fabrica-plugin.zip dist/fabrica-plugin.zip.sha256 --clobber

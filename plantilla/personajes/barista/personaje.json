@@ -1,0 +1,30 @@
+{
+  "id": "barista",
+  "display_name": "Barista",
+  "role": "humano",
+  "description": "Atiende la barra de la cafetería. Delantal mostaza, camiseta verde, pelo rizado. Seco, ha visto de todo.",
+  "height": 1.72,
+  "head_offset": [0, 0, 1.45],
+  "subtitle_color": "#ffffff",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "",
+    "name": "(pendiente: elige una voz de la biblioteca pública de ElevenLabs)",
+    "settings": {"stability": 0.45, "similarity_boost": 0.75, "style": 0.3}
+  },
+  "emotions": ["neutral", "orgulloso", "confuso", "alarma", "juzgando", "hundido", "panico", "aliviado"],
+  "actions": ["idle", "talk_gesture", "present_gesture", "shrug", "facepalm", "lean_in", "recoil", "slump"],
+  "placeholder": {"shape": "human"},
+  "human": {
+    "skin": "#e0ac85",
+    "skin_dark": "#c99470",
+    "hoodie": "#2f5f55",
+    "hoodie_dark": "#244b43",
+    "jeans": "#3a3530",
+    "hair": "#4a2a18",
+    "hair_style": "curly",
+    "stubble": true,
+    "apron": "#d6a23c",
+    "apron_dark": "#a87a24"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "background": "#07090f",
+  "background_blue": "#0b1224",
+  "key_light": "#ff9a4d",
+  "rim_light": "#ffc58a",
+  "fill_light": "#3a5a9a",
+  "accent": "#ff8a3d",
+  "danger": "#ff3b3b",
+  "info": "#3d8bff",
+  "text": "#ffffff",
+  "subtitle_stroke": "#000000",
+  "font": "Inter",
+  "fps": 30,
+  "playback_speed": 1.0,
+  "width": 1080,
+  "height": 1920
+}

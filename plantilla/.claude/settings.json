@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run reels doctor:*)",
+      "Bash(uv run reels lint:*)",
+      "Bash(uv run reels build:*)",
+      "Bash(uv run reels animatic:*)",
+      "Bash(uv run reels preview:*)",
+      "Bash(uv run reels compose:*)",
+      "Bash(uv run reels check:*)",
+      "Bash(uv run reels sheet:*)",
+      "Bash(uv run reels cover:*)",
+      "Bash(uv run reels personaje:*)",
+      "Bash(uv run reels review:*)",
+      "Bash(uv run reels humo:*)",
+      "Bash(uv run python .claude/skills/episodio/estimar_voz.py:*)",
+      "Bash(uv run python .claude/skills/tarrito/comprobar.py:*)",
+      "Bash(uv run python .claude/skills/personaje/casting.py buscar:*)",
+      "Bash(uv run python .claude/skills/personaje/casting.py estimar:*)",
+      "Bash(uv run python .claude/skills/personaje/casting.py saldo:*)",
+      "Bash(uv run python .claude/skills/personaje/casting.py medir:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "ask": [
+      "Bash(uv run reels voice:*)",
+      "Bash(uv run reels music-gen:*)",
+      "Bash(uv run reels sfx-gen:*)",
+      "Bash(uv run python .claude/skills/personaje/casting.py probar:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}

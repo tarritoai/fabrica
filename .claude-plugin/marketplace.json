@@ -1,0 +1,23 @@
+{
+  "name": "tarritoai",
+  "description": "La fábrica de reels del curso de @tarritoai: instalador, tutor y actualizador.",
+  "owner": {
+    "name": "tarritoai",
+    "url": "https://github.com/tarritoai"
+  },
+  "plugins": [
+    {
+      "name": "fabrica",
+      "source": "./plugin",
+      "description": "Instala tu fábrica de reels (Blender, ffmpeg, whisper, Remotion) sin permisos de administrador, te ayuda si algo falla y la mantiene al día sin tocar tu memoria.",
+      "category": "productivity",
+      "tags": [
+        "curso",
+        "reels",
+        "video",
+        "blender",
+        "espanol"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+ "slug": "humo",
+ "title": "Prueba de humo",
+ "premise": "La taza comprueba que la fábrica funciona en esta computadora (audio ya incluido: no gasta nada).",
+ "tone": "agridulce",
+ "series": null,
+ "music": null,
+ "characters": [
+  "humano",
+  "cosa"
+ ],
+ "source": {
+  "type": "evergreen",
+  "links": []
+ },
+ "set": "habitacion",
+ "beats": [
+  {
+   "id": 1,
+   "speaker": "cosa",
+   "line": "¡Hola! Soy tu taza.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "media"
+   },
+   "emotion": "orgulloso",
+   "listener_emotion": "neutral",
+   "action": "idle",
+   "camera": "closeup_cosa",
+   "event": null,
+   "sfx": [],
+   "hold": 0.3
+  },
+  {
+   "id": 2,
+   "speaker": "cosa",
+   "line": "Si me oyes, tu fábrica funciona.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.3,
+    "intensity": "media"
+   },
+   "emotion": "neutral",
+   "listener_emotion": "neutral",
+   "action": "idle",
+   "camera": "two_shot",
+   "event": null,
+   "sfx": [],
+   "hold": 0.6
+  },
+  {
+   "id": 3,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "emotion": "orgulloso",
+   "listener_emotion": "neutral",
+   "action": "idle",
+   "camera": "closeup_cosa",
+   "event": null,
+   "sfx": [],
+   "hold": 1.0
+  }
+ ],
+ "loop_hint": "",
+ "alt_hooks": [],
+ "hook": null
+}

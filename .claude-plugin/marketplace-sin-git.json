@@ -1,0 +1,20 @@
+{
+  "name": "tarritoai",
+  "description": "La fábrica de reels del curso de @tarritoai, para ordenadores sin git: el plugin llega como un zip con la plantilla dentro.",
+  "owner": {
+    "name": "tarritoai",
+    "url": "https://github.com/tarritoai"
+  },
+  "plugins": [
+    {
+      "name": "fabrica",
+      "source": {
+        "source": "archive",
+        "url": "https://github.com/tarritoai/fabrica/releases/latest/download/fabrica-plugin.zip"
+      },
+      "description": "Instala tu fábrica de reels (Blender, ffmpeg, whisper, Remotion) sin permisos de administrador, te ayuda si algo falla y la mantiene al día sin tocar tu memoria.",
+      "category": "productivity",
+      "tags": ["curso", "reels", "video", "blender", "espanol"]
+    }
+  ]
+}

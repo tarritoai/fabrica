@@ -1,0 +1,10 @@
+{
+  "_ayuda": "Tu reparto. El 3D sabe poner en escena dos papeles: «humano» (la persona) y «cosa» (lo que la observa: una taza, una lámpara, una cafetera...). «personaje» = qué carpeta lo interpreta por defecto (personajes/<nombre>/personaje.json, o los de la plantilla en assets/characters/); «nombre» = otro nombre que puedes usar en tus guiones. Un guion también puede elegir su propio reparto: basta con poner sus personajes en «characters» (el primer humano hace de humano y la primera cosa, de cosa) o escribir «reparto»: {\"humano\": \"estudiante\", \"cosa\": \"lucio\"}. En los guiones valen el nombre del personaje, este «nombre», el papel («humano» / «cosa») o el interno (novato / claude). Guía: docs/personajes.md.",
+  "humano": {
+    "personaje": "prota"
+  },
+  "cosa": {
+    "personaje": "taza"
+  },
+  "otros": {}
+}

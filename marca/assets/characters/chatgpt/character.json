@@ -1,0 +1,11 @@
+{
+  "id": "chatgpt",
+  "display_name": "ChatGPT",
+  "height": 0.9,
+  "head_offset": [0, 0, 0.55],
+  "subtitle_color": "#7fe0c4",
+  "voice": {"provider": "elevenlabs", "voice_id": "D7dkYvH17OKLgp4SLulf", "name": "Martin Osborne", "settings": {"stability": 0.35, "similarity_boost": 0.75, "style": 0.5}},
+  "emotions": ["neutral", "orgulloso", "confuso", "alarma", "juzgando", "hundido", "panico", "aliviado"],
+  "actions": ["idle", "talk_gesture", "shrug", "lean_in", "recoil", "slump"],
+  "placeholder": {"shape": "sphere", "color": "#9aa5b1"}
+}

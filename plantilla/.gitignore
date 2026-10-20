@@ -1,0 +1,88 @@
+# Secrets (yes, the irony is intended)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node / Remotion
+node_modules
+remotion/out/
+remotion/.remotion/
+
+# Local binaries and models (big, downloaded by the installer / `reels descargar-modelo`)
+models
+tools/
+
+# Episodes: only script.json is versioned (audio, renders and scenes are local)
+episodes/*/*
+!episodes/*/script.json
+# ...and the episode's paper trail: state to resume in a new chat, critiques, script versions
+!episodes/*/estado.md
+!episodes/*/critica.md
+!episodes/*/guion-v*.md
+!episodes/README.md
+# The smoke test is regenerated from assets/humo/ every time
+episodes/humo/
+# ...and so are the template's examples, from assets/ejemplos/ (`reels ejemplo <slug>`)
+episodes/lampara-de-las-tres/
+episodes/cafeteria-moka/
+
+# References: other people's reels never go to git
+references/*
+!references/README.md
+!references/patterns.md
+!references/visto.md
+
+# Loose media
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.blend1
+*.blend2
+# ...except the template's own audio (smoke-test voices, sound effects)
+!assets/humo/audio/*.wav
+!assets/humo/audio/*.mp3
+!assets/sfx/*.wav
+!assets/ejemplos/*/audio/*.wav
+!assets/ejemplos/*/audio/*.mp3
+!assets/ejemplos/*/musica/*.mp3
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local caches (voices cost money: never delete casually)
+.cache/
+
+# Music: only the catalogue is versioned (licences vary; clips are local)
+assets/music/*
+!assets/music/music.json
+!assets/music/README.md
+
+# Ready-to-upload folders and voice recordings stay local
+publicar/
+grabaciones/
+
+# Instagram comments: other people's words, local only
+metrics/comments.jsonl
+logs/
+
+# Expression sheets are generated (`reels personaje <id>`)
+personajes/*/hoja.png
+
+# Backups and proposals of /fabrica:actualizar (.fabrica/plantilla.json is versioned; course stamps: curso/progreso.json)
+.fabrica/copias/
+.fabrica/actualizacion-*/
+.fabrica/en-marcha.lock
+
+personajes/*/fotograma.png
+personajes/*/casting/

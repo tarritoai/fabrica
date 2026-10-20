@@ -1,0 +1,26 @@
+{
+  "id": "robot",
+  "display_name": "Robot",
+  "offscreen": true,
+  "subtitle_color": "#ff6a5a",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "nXU34EDlB5tONGFxYBV2",
+    "name": "Bruno (filtro metálico)",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.2
+    }
+  },
+  "voice_filter": "asetrate=44100*0.86,aresample=44100,atempo=1.163,aecho=0.6:0.3:5:0.22,equalizer=f=110:t=q:w=1:g=4,acompressor=threshold=-18dB:ratio=3,volume=1.3",
+  "emotions": [
+    "neutral"
+  ],
+  "actions": [
+    "idle"
+  ],
+  "space": {
+    "ruinas": "hall"
+  }
+}

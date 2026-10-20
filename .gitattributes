@@ -1,0 +1,8 @@
+* text=auto
+*.py text eol=lf
+*.sh text eol=lf
+*.wav binary
+*.mp3 binary
+*.glb binary
+*.woff2 binary
+*.png binary

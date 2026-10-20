@@ -1,0 +1,10 @@
+{
+  "id": "mama",
+  "display_name": "Mamá",
+  "offscreen": true,
+  "subtitle_color": "#ffc9d6",
+  "voice": {"provider": "elevenlabs", "voice_id": "KHCvMklQZZo0O30ERnVn", "name": "Sara Martin (gentle)", "settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.3}},
+  "voice_filter": "highpass=f=320,lowpass=f=3400,acompressor=threshold=-18dB:ratio=3",
+  "emotions": ["neutral"],
+  "actions": ["idle"]
+}

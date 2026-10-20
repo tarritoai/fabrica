@@ -1,0 +1,476 @@
+{
+ "slug": "lampara-de-las-tres",
+ "title": "La lámpara de las tres · El tema 4",
+ "premise": "A las 2:07 el grupo pregunta quién entendió el tema 4 y Paula contesta «yo sí» sin haberlo abierto. Lucio la empuja dos veces a decir la verdad: la primera se niega; la segunda, con seis esperando su explicación por llamada a las 3:40 y una hora atascada en el mismo párrafo, confiesa que no entiende nada. Maru: «yo tampoco»; y ninguno de los seis lo entendió.",
+ "tone": "agridulce",
+ "series": null,
+ "music": {
+  "mood": "agridulce",
+  "track": "clips/agridulce_3ede1866_00000.mp3",
+  "start_at_beat": 1,
+  "fade_in": 1.5,
+  "swell_at_beat": 17,
+  "swell_level": 0.6
+ },
+ "characters": [
+  "estudiante",
+  "lucio"
+ ],
+ "source": {
+  "type": "evergreen",
+  "links": []
+ },
+ "set": "habitacion",
+ "set_options": {
+  "window": "noche",
+  "apuntes": true,
+  "desk": "#4a3528"
+ },
+ "loop_hint": "Empieza y acaba en el mismo chat del grupo, con dos burbujas: al principio Maru pregunta y Paula miente («yo sí»); al final Paula confiesa y Maru tampoco lo entendió.",
+ "alt_hooks": [
+  "Yo… sí.",
+  "Nadie contestaba. Alguien tenía que decir algo."
+ ],
+ "hook": null,
+ "tests": [
+  "H1"
+ ],
+ "beats": [
+  {
+   "id": 1,
+   "speaker": "lucio",
+   "line": "¿Tú sí?",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[doubtful] ¿Tú sí?"
+   },
+   "emotion": "juzgando",
+   "listener_emotion": "confuso",
+   "action": "idle",
+   "camera": "phone_screen",
+   "event": {
+    "type": "screen",
+    "component": "PhoneChat",
+    "props": {
+     "owner": "estudiante",
+     "app_name": "Parcial · jueves 9:00",
+     "messages": [
+      {
+       "from_user": false,
+       "text": "Maru: ¿alguien entendió el tema 4?"
+      },
+      {
+       "from_user": true,
+       "text": "yo sí"
+      }
+     ],
+     "last_at": null
+    }
+   },
+   "sfx": [
+    "ding"
+   ],
+   "sfx_at": [
+    0.0
+   ],
+   "hold": 0.6,
+   "light": "madrugada",
+   "light_snap": true
+  },
+  {
+   "id": 2,
+   "speaker": "estudiante",
+   "line": "Es que… nadie contestaba.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[low, guilty voice] Es que... nadie contestaba."
+   },
+   "emotion": "hundido",
+   "listener_emotion": "juzgando",
+   "action": "idle",
+   "camera": "closeup_novato",
+   "hold": 0.1
+  },
+  {
+   "id": 3,
+   "speaker": "lucio",
+   "line": "¿Lo abriste?",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[flat] ¿Lo abriste?"
+   },
+   "emotion": "juzgando",
+   "listener_emotion": "alarma",
+   "action": "lean_in",
+   "camera": "closeup_ai",
+   "hold": 0.1
+  },
+  {
+   "id": 4,
+   "speaker": "estudiante",
+   "line": "…Lo abro ahora.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[small voice] Lo abro... ahora."
+   },
+   "emotion": "hundido",
+   "listener_emotion": "juzgando",
+   "action": "facepalm",
+   "camera": "closeup_novato",
+   "hold": 0.1
+  },
+  {
+   "id": 5,
+   "speaker": "lucio",
+   "line": "Diles.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[quiet, plain] Diles."
+   },
+   "emotion": "neutral",
+   "listener_emotion": "alarma",
+   "action": "talk_gesture",
+   "camera": "closeup_ai",
+   "hold": 0.1
+  },
+  {
+   "id": 6,
+   "speaker": "estudiante",
+   "line": "Ni loca. Ya dije que sí.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "media",
+    "spoken": "[whispers] Ni loca. Ya dije que SÍ."
+   },
+   "emotion": "alarma",
+   "listener_emotion": "neutral",
+   "action": "lean_in",
+   "camera": "closeup_novato",
+   "hold": 0.2
+  },
+  {
+   "id": 7,
+   "speaker": "lucio",
+   "line": "Una hora en el mismo párrafo.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[flat, tired voice] Una hora en el mismo párrafo."
+   },
+   "emotion": "juzgando",
+   "listener_emotion": "hundido",
+   "action": "slump",
+   "camera": "two_shot",
+   "sfx": [
+    "whoosh"
+   ],
+   "sfx_at": [
+    0.0
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": 8,
+   "speaker": "estudiante",
+   "line": "Ya casi lo… No. No entiendo nada.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[low, stubborn voice] Ya casi lo... [short pause] No. No entiendo NADA."
+   },
+   "emotion": "hundido",
+   "listener_emotion": "juzgando",
+   "action": "idle",
+   "camera": "closeup_novato",
+   "hold": 0.1
+  },
+  {
+   "id": 9,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "reactor": "estudiante",
+   "emotion": "alarma",
+   "listener_emotion": "alarma",
+   "action": "look_phone",
+   "camera": "two_shot",
+   "cut_camera": "phone_screen",
+   "cut_at": 0.9,
+   "event": {
+    "type": "screen",
+    "component": "PhoneNotifications",
+    "props": {
+     "time": "3:31",
+     "app_name": "",
+     "stagger": 0.55,
+     "messages": [
+      {
+       "app": "Grupo parcial",
+       "text": "Maru: Pau, llamada a las 3:40 y nos explicas"
+      },
+      {
+       "app": "Grupo parcial",
+       "text": "Leo: me uno"
+      },
+      {
+       "app": "Grupo parcial",
+       "text": "Maru: ya somos seis"
+      }
+     ],
+     "date": "jueves, 23 de octubre"
+    }
+   },
+   "sfx": [
+    "ding",
+    "ding",
+    "ding_alarm"
+   ],
+   "sfx_at": [
+    0.3,
+    0.85,
+    1.4
+   ],
+   "hold": 0.35
+  },
+  {
+   "id": 10,
+   "speaker": "estudiante",
+   "line": "¿Seis?",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "alta",
+    "spoken": "[panicked whisper] ¿SEIS?"
+   },
+   "emotion": "panico",
+   "listener_emotion": "neutral",
+   "action": "recoil",
+   "camera": "closeup_novato",
+   "hold": 0.1
+  },
+  {
+   "id": 11,
+   "speaker": "estudiante",
+   "line": "Invento algo, sueno segura y ya.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "media",
+    "spoken": "[rushed, nervous] Invento algo, sueno segura y ya."
+   },
+   "emotion": "panico",
+   "listener_emotion": "juzgando",
+   "action": "talk_gesture",
+   "camera": "closeup_novato",
+   "hold": 0.1
+  },
+  {
+   "id": 12,
+   "speaker": "lucio",
+   "line": "Diles lo que me dijiste a mí.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.5,
+    "intensity": "baja",
+    "spoken": "[low, warm voice] Diles lo que me dijiste a mí."
+   },
+   "emotion": "neutral",
+   "listener_emotion": "hundido",
+   "action": "talk_gesture",
+   "camera": "closeup_ai",
+   "hold": 0.1
+  },
+  {
+   "id": 13,
+   "speaker": "estudiante",
+   "line": "¿Que no entiendo nada?",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[small voice] ¿Que no entiendo nada?"
+   },
+   "emotion": "hundido",
+   "listener_emotion": "neutral",
+   "action": "idle",
+   "camera": "closeup_novato",
+   "hold": 0.1
+  },
+  {
+   "id": 14,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "reactor": "estudiante",
+   "emotion": "hundido",
+   "listener_emotion": "neutral",
+   "action": "look_phone",
+   "camera": "two_shot",
+   "sfx": [
+    "typing_tiny"
+   ],
+   "sfx_at": [
+    0.3
+   ],
+   "hold": 1.6
+  },
+  {
+   "id": 15,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "reactor": "estudiante",
+   "emotion": "hundido",
+   "listener_emotion": "neutral",
+   "action": "look_phone",
+   "camera": "phone_screen",
+   "event": {
+    "type": "screen",
+    "component": "PhoneChat",
+    "props": {
+     "owner": "estudiante",
+     "app_name": "Parcial · jueves 9:00",
+     "messages": [
+      {
+       "from_user": true,
+       "text": "mentí. no entiendo nada"
+      },
+      {
+       "from_user": false,
+       "text": "Maru: yo tampoco. ¿llamada?"
+      }
+     ],
+     "last_at": 1.2
+    }
+   },
+   "sfx": [
+    "ding"
+   ],
+   "sfx_at": [
+    1.2
+   ],
+   "hold": 2.6
+  },
+  {
+   "id": 16,
+   "speaker": "estudiante",
+   "line": "¿Tampoco?",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[laughs softly] ¿Tampoco?"
+   },
+   "emotion": "aliviado",
+   "listener_emotion": "aliviado",
+   "action": "idle",
+   "camera": "closeup_novato",
+   "hold": 0.2,
+   "tears": "wet"
+  },
+  {
+   "id": 17,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "reactor": "estudiante",
+   "emotion": "aliviado",
+   "listener_emotion": "aliviado",
+   "action": "look_phone",
+   "camera": "phone_screen",
+   "event": {
+    "type": "screen",
+    "component": "PhoneNotifications",
+    "props": {
+     "time": "3:40",
+     "app_name": "",
+     "stagger": 0.4,
+     "messages": [
+      {
+       "app": "Grupo parcial",
+       "text": "Leo: yo tampoco"
+      },
+      {
+       "app": "Grupo parcial",
+       "text": "Caro: yo ni lo abrí"
+      },
+      {
+       "app": "Grupo parcial",
+       "text": "Leo: ¿y quién lo entendió?"
+      }
+     ],
+     "date": "jueves, 23 de octubre"
+    }
+   },
+   "sfx": [
+    "ding",
+    "ding",
+    "ding"
+   ],
+   "sfx_at": [
+    0.3,
+    0.7,
+    1.1
+   ],
+   "hold": 0.45
+  },
+  {
+   "id": 18,
+   "speaker": "lucio",
+   "line": "Nadie. Ninguno de los seis.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "baja",
+    "spoken": "[dry, a little amused] Nadie. Ninguno de los seis.",
+    "seed": 6001
+   },
+   "emotion": "aliviado",
+   "listener_emotion": "aliviado",
+   "action": "idle",
+   "camera": "closeup_ai",
+   "hold": 0.2
+  },
+  {
+   "id": 19,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "reactor": "estudiante",
+   "emotion": "aliviado",
+   "listener_emotion": "aliviado",
+   "action": "phone_lower",
+   "camera": "two_shot",
+   "hold": 2.0,
+   "tears": "wet",
+   "light": "tibio"
+  }
+ ]
+}

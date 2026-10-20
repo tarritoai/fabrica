@@ -1,0 +1,28 @@
+{
+  "id": "voz_sola",
+  "display_name": "La luz sola",
+  "offscreen": true,
+  "subtitle_color": "#f2e2c8",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "qBvury71WUJfVeT1STkG",
+    "name": "Samanta - Warm, Tender, Expressive",
+    "settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.75,
+      "style": 0.3
+    }
+  },
+  "emotions": [
+    "neutral"
+  ],
+  "actions": [
+    "idle"
+  ],
+  "space": {
+    "noche": "luz_lejos"
+  },
+  "level_db": -5.0,
+  "on_phone": false,
+  "voice_note": "Voz más joven desde 2026-10-16 (antes: Regina, eBthAb30UYbt2nojGXeA)."
+}

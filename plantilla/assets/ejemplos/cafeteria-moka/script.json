@@ -1,0 +1,114 @@
+{
+ "slug": "cafeteria-moka",
+ "title": "Moka (prueba de cafetería)",
+ "premise": "Prueba de decorado de negocio, de día: una cafetera con cara en la barra y el barista detrás. Comedia seca. Sin voz nueva.",
+ "tone": "comedia",
+ "series": null,
+ "music": null,
+ "characters": [
+  "barista",
+  "moka"
+ ],
+ "source": {
+  "type": "evergreen",
+  "links": []
+ },
+ "set": "mostrador",
+ "set_options": {
+  "variant": "cafeteria",
+  "accent": "#2f6b5a"
+ },
+ "beats": [
+  {
+   "id": 1,
+   "speaker": "moka",
+   "line": "Si me oyes, la fábrica funciona.",
+   "delivery": {
+    "tags": [],
+    "pace": "normal",
+    "pause_before": 0.0,
+    "intensity": "media"
+   },
+   "emotion": "orgulloso",
+   "listener_emotion": "juzgando",
+   "action": "idle",
+   "camera": "closeup_cosa",
+   "event": null,
+   "sfx": [],
+   "hold": 0.5
+  },
+  {
+   "id": 2,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "emotion": "juzgando",
+   "listener_emotion": "orgulloso",
+   "action": "idle",
+   "camera": "two_shot",
+   "event": null,
+   "sfx": [],
+   "hold": 1.6,
+   "reactor": "barista"
+  },
+  {
+   "id": 3,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "emotion": "confuso",
+   "listener_emotion": "juzgando",
+   "action": "idle",
+   "camera": "closeup_cosa",
+   "event": null,
+   "sfx": [],
+   "hold": 1.4,
+   "reactor": "moka"
+  },
+  {
+   "id": 4,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "emotion": "neutral",
+   "listener_emotion": "confuso",
+   "action": "shrug",
+   "camera": "closeup_humano",
+   "event": null,
+   "sfx": [],
+   "hold": 1.5,
+   "reactor": "barista"
+  },
+  {
+   "id": 5,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "emotion": "alarma",
+   "listener_emotion": "alarma",
+   "action": "recoil",
+   "camera": "closeup_cosa",
+   "event": null,
+   "sfx": [],
+   "hold": 1.4,
+   "reactor": "moka"
+  },
+  {
+   "id": 6,
+   "speaker": null,
+   "line": null,
+   "delivery": null,
+   "emotion": "aliviado",
+   "listener_emotion": "aliviado",
+   "action": "present_gesture",
+   "camera": "establishing",
+   "event": null,
+   "sfx": [],
+   "hold": 2.2,
+   "reactor": "barista"
+  }
+ ],
+ "loop_hint": "",
+ "alt_hooks": [],
+ "hook": null
+}

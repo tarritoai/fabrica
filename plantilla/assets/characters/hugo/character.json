@@ -1,0 +1,64 @@
+{
+  "id": "hugo",
+  "display_name": "Hugo",
+  "height": 1.7,
+  "head_offset": [
+    0,
+    0,
+    1.45
+  ],
+  "subtitle_color": "#a8dcff",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "1MxuWc12WPRxDkgfT3kj",
+    "name": "Efrayn",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.3
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "present_gesture",
+    "shrug",
+    "facepalm",
+    "lean_in",
+    "look_phone",
+    "recoil",
+    "slump",
+    "phone_ear"
+  ],
+  "placeholder": {
+    "shape": "human",
+    "color": "#4a6fa5",
+    "head_color": "#e8b48a",
+    "hair_color": "#5a3a22"
+  },
+  "human": {
+    "skin": "#e3b08c",
+    "skin_dark": "#c99272",
+    "hoodie": "#34466e",
+    "hoodie_dark": "#283656",
+    "jeans": "#3a3a40",
+    "hair": "#6b4423",
+    "stubble": false,
+    "hair_style": "curly",
+    "pose": "sofa"
+  },
+  "space": {
+    "noche": "room_far"
+  },
+  "role": "human"
+}

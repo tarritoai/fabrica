@@ -1,0 +1,27 @@
+{
+  "id": "voz_co",
+  "display_name": "Persona (Colombia)",
+  "offscreen": true,
+  "subtitle_color": "#ffd9a8",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "86V9x9hrQds83qf7zaGn",
+    "name": "Marcela - Youthful, Smooth and Natural",
+    "settings": {
+      "stability": 0.45,
+      "similarity_boost": 0.75,
+      "style": 0.4
+    }
+  },
+  "emotions": [
+    "neutral"
+  ],
+  "actions": [
+    "idle"
+  ],
+  "space": {
+    "noche": "luz"
+  },
+  "level_db": -7.0,
+  "on_phone": false
+}

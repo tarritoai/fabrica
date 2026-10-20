@@ -1,0 +1,786 @@
+{
+ "_leeme": "Tabla de errores conocidos. Fuente única: de aquí salen plugin/skills/tarrito/errores-conocidos.md (tools/gen_errores.py) y la tabla del Manual. 'texto' es el mensaje exacto en inglés (o el nuestro, en español, si lo da el instalador); 'patrones' son expresiones regulares (sin mayúsculas) para reconocerlo en un error pegado; 'origen': probado = visto en una prueba real; documentado = sale en la documentación oficial; esperado = mensaje típico de ese programa, aún no visto en nuestras pruebas.",
+ "errores": [
+  {
+   "id": "claude-no-reconocido-cmd",
+   "so": [
+    "windows"
+   ],
+   "cuando": "instalar Claude Code",
+   "texto": "'claude' is not recognized as an internal or external command, operable program or batch file.",
+   "patrones": [
+    "'claude' is not recognized",
+    "the term 'claude' is not recognized"
+   ],
+   "significa": "Windows todavía no sabe dónde está Claude Code: la ventana se abrió antes de instalarlo.",
+   "arreglo": "Cierra la ventana de la terminal y abre una nueva (en tu carpeta de la fábrica). Si sigue igual, reinicia el ordenador. En PowerShell el mismo error dice: «The term 'claude' is not recognized as the name of a cmdlet…».",
+   "origen": "documentado"
+  },
+  {
+   "id": "claude-no-encontrado-unix",
+   "so": [
+    "mac",
+    "linux"
+   ],
+   "cuando": "instalar Claude Code",
+   "texto": "zsh: command not found: claude   (o: bash: claude: command not found)",
+   "patrones": [
+    "command not found: claude",
+    "claude: command not found"
+   ],
+   "significa": "La terminal no encuentra Claude Code: o no se instaló, o esta ventana es anterior a la instalación.",
+   "arreglo": "Cierra la terminal y abre una nueva. Si sigue: vuelve a pegar el comando de instalación oficial (curl -fsSL https://claude.ai/install.sh | bash) y lee la última línea que escribe.",
+   "origen": "documentado"
+  },
+  {
+   "id": "powershell-and",
+   "so": [
+    "windows"
+   ],
+   "cuando": "instalar Claude Code",
+   "texto": "The token '&&' is not a valid statement separator in this version.",
+   "patrones": [
+    "the token '&&' is not a valid statement separator"
+   ],
+   "significa": "Has pegado el comando de CMD en PowerShell (son dos terminales distintas de Windows).",
+   "arreglo": "En PowerShell usa este: irm https://claude.ai/install.ps1 | iex",
+   "origen": "documentado"
+  },
+  {
+   "id": "cmd-irm",
+   "so": [
+    "windows"
+   ],
+   "cuando": "instalar Claude Code",
+   "texto": "'irm' is not recognized as an internal or external command, operable program or batch file.",
+   "patrones": [
+    "'irm' is not recognized"
+   ],
+   "significa": "Has pegado el comando de PowerShell en CMD (la ventana negra antigua).",
+   "arreglo": "En CMD usa: curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd — o abre «Terminal» (PowerShell) y usa el de irm.",
+   "origen": "documentado"
+  },
+  {
+   "id": "plugin-sin-git",
+   "so": [
+    "windows",
+    "linux"
+   ],
+   "cuando": "/plugin install fabrica",
+   "texto": "Failed to add marketplace: Fetching the marketplace from GitHub failed on both attempts. … Executable not found in $PATH: \"git\"",
+   "patrones": [
+    "executable not found in \\$path: \"git\"",
+    "executable not found in \\$path: 'git'"
+   ],
+   "significa": "Para traer la fábrica desde GitHub, Claude Code necesita el programa git, y tu ordenador no lo tiene.",
+   "arreglo": "Windows: instala Git for Windows (winget install --id Git.Git -e, o el instalador de git-scm.com; Windows te pedirá permiso con una ventana: pulsa Sí), cierra la terminal, ábrela otra vez y repite /plugin install. Si no puedes instalar git, usa la instalación sin git del Manual (marketplace por URL). Linux: git viene casi siempre; si no, pídele a quien tenga la contraseña que ejecute sudo apt install git.",
+   "origen": "probado"
+  },
+  {
+   "id": "plugin-repo-no-encontrado",
+   "so": [
+    "todos"
+   ],
+   "cuando": "/plugin install fabrica",
+   "texto": "Failed to clone marketplace repository: HTTPS authentication failed. Please ensure your credential helper is configured (e.g., gh auth login). … fatal: could not read Username for 'https://github.com': terminal prompts disabled",
+   "patrones": [
+    "https authentication failed",
+    "could not read username for 'https://github.com'",
+    "repository not found"
+   ],
+   "significa": "GitHub dice que ese repositorio no existe: casi siempre es una letra mal escrita en tarritoai/fabrica (o el repositorio aún no es público). No te está pidiendo ninguna contraseña.",
+   "arreglo": "Copia el comando del Manual tal cual: /plugin install fabrica --marketplace tarritoai/fabrica. Si está bien escrito y sigue, avísanos por el canal del curso.",
+   "origen": "probado"
+  },
+  {
+   "id": "plugin-version-vieja",
+   "so": [
+    "todos"
+   ],
+   "cuando": "/plugin install fabrica",
+   "texto": "error: unknown option '--marketplace'",
+   "patrones": [
+    "unknown option '--marketplace'",
+    "unknown option \"--marketplace\""
+   ],
+   "significa": "Tu Claude Code es anterior a la versión que sabe instalar un plugin en un paso.",
+   "arreglo": "Sal de Claude (escribe /exit), ejecuta claude update, vuelve a entrar y repite. O en dos pasos: /plugin marketplace add tarritoai/fabrica y luego /plugin install fabrica@tarritoai.",
+   "origen": "esperado"
+  },
+  {
+   "id": "skill-no-existe",
+   "so": [
+    "todos"
+   ],
+   "cuando": "/fabrica:instalar",
+   "texto": "Unknown skill: fabrica:instalar   (o: Unknown command)",
+   "patrones": [
+    "unknown skill: fabrica",
+    "unknown command: /fabrica",
+    "unknown slash command"
+   ],
+   "significa": "El plugin está instalado pero esta conversación se abrió antes y no lo ha cargado.",
+   "arreglo": "Escribe /reload-plugins (o sal con /exit y vuelve a entrar con claude). Comprueba con /plugin que «fabrica» aparece como instalado.",
+   "origen": "documentado"
+  },
+  {
+   "id": "ps-scripts-desactivados",
+   "so": [
+    "windows"
+   ],
+   "cuando": "/fabrica:instalar",
+   "texto": "fabrica.ps1 cannot be loaded because running scripts is disabled on this system.",
+   "patrones": [
+    "cannot be loaded because running scripts is disabled"
+   ],
+   "significa": "Windows bloquea los scripts de PowerShell por defecto. El instalador lo esquiva solo para sí mismo, sin cambiar nada de tu sistema.",
+   "arreglo": "Lanza el paso con el comando exacto de la skill (powershell -NoProfile -ExecutionPolicy Bypass -File …). No hace falta cambiar ninguna política ni ser administrador.",
+   "origen": "documentado"
+  },
+  {
+   "id": "uv-tls",
+   "so": [
+    "windows"
+   ],
+   "cuando": "instalar uv",
+   "texto": "irm : The request was aborted: Could not create SSL/TLS secure channel.",
+   "patrones": [
+    "could not create ssl/tls secure channel",
+    "the underlying connection was closed"
+   ],
+   "significa": "Un Windows antiguo intenta conectarse con un cifrado viejo que ya no se acepta.",
+   "arreglo": "Vuelve a lanzar el paso (el instalador activa TLS 1.2). Si persiste: actualiza Windows (Windows Update) y reinicia.",
+   "origen": "esperado"
+  },
+  {
+   "id": "sin-conexion",
+   "so": [
+    "todos"
+   ],
+   "cuando": "descargas",
+   "texto": "<programa>: la descarga ha fallado 5 veces (…). Revisa tu conexión y vuelve a lanzar el mismo paso: seguirá donde se quedó",
+   "patrones": [
+    "la descarga ha fallado",
+    "urlopen error",
+    "temporary failure in name resolution",
+    "getaddrinfo failed",
+    "connection reset",
+    "timed out",
+    "econnreset",
+    "etimedout"
+   ],
+   "significa": "Se cortó internet (o la web de descarga no respondía) varias veces seguidas.",
+   "arreglo": "Comprueba que tienes internet y vuelve a pedir el mismo paso: lo que ya se bajó no se pierde. En redes de empresa o colegio, prueba desde casa.",
+   "origen": "probado"
+  },
+  {
+   "id": "certificado",
+   "so": [
+    "todos"
+   ],
+   "cuando": "descargas",
+   "texto": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate",
+   "patrones": [
+    "certificate_verify_failed",
+    "certificate verify failed",
+    "no se fía del certificado"
+   ],
+   "significa": "Tu ordenador no puede comprobar que la web de descarga es quien dice ser. Casi siempre: la fecha/hora del ordenador está mal, o un antivirus revisa las conexiones seguras.",
+   "arreglo": "Pon bien la fecha y la hora (automáticas) y repite. Si tienes un antivirus con «análisis de HTTPS/web shield», desactiva esa opción mientras instalas.",
+   "origen": "esperado"
+  },
+  {
+   "id": "descarga-hash",
+   "so": [
+    "todos"
+   ],
+   "cuando": "descargas",
+   "texto": "<programa>: el archivo descargado no coincide con su huella de seguridad (SHA-256) ni a la segunda: no lo instalo",
+   "patrones": [
+    "huella de seguridad",
+    "sha-256",
+    "sha256 mismatch"
+   ],
+   "significa": "Lo que ha llegado no es exactamente el archivo oficial (descarga corrupta, o algo en la red lo cambia). Por seguridad, no se instala.",
+   "arreglo": "Repite el paso más tarde o desde otra red. Si se repite siempre, avísanos: puede que esa versión haya cambiado en la web oficial.",
+   "origen": "esperado"
+  },
+  {
+   "id": "descarga-404",
+   "so": [
+    "todos"
+   ],
+   "cuando": "descargas",
+   "texto": "<programa>: la dirección de descarga ya no existe (…)",
+   "patrones": [
+    "la dirección de descarga ya no existe",
+    "http error 404"
+   ],
+   "significa": "La web oficial ha movido o borrado esa versión.",
+   "arreglo": "Actualiza la fábrica (/fabrica:actualizar o /plugin → Marketplaces → tarritoai → Update) y repite. Si sigue, avísanos.",
+   "origen": "esperado"
+  },
+  {
+   "id": "archivo-roto",
+   "so": [
+    "todos"
+   ],
+   "cuando": "descargas",
+   "texto": "<archivo> está dañado (descarga incompleta); vuelve a lanzar el paso",
+   "patrones": [
+    "está dañado",
+    "bad zipfile",
+    "not a zip file",
+    "unexpected end of data"
+   ],
+   "significa": "El archivo comprimido llegó a medias.",
+   "arreglo": "Vuelve a lanzar el mismo paso: el instalador ya lo ha borrado y lo baja otra vez.",
+   "origen": "esperado"
+  },
+  {
+   "id": "sin-espacio",
+   "so": [
+    "todos"
+   ],
+   "cuando": "descargas, render",
+   "texto": "[Errno 28] No space left on device   (Windows: There is not enough space on the disk)",
+   "patrones": [
+    "no space left on device",
+    "not enough space on the disk",
+    "falta espacio"
+   ],
+   "significa": "El disco está lleno. La fábrica necesita unos 8 GB para instalarse y más para cada vídeo.",
+   "arreglo": "Libera espacio (papelera, Descargas, vídeos viejos) hasta tener al menos 15 GB libres y repite el paso.",
+   "origen": "esperado"
+  },
+  {
+   "id": "tiempo-agotado",
+   "so": [
+    "todos"
+   ],
+   "cuando": "cualquier paso",
+   "texto": "«<programa>» tardó demasiado y lo he parado",
+   "patrones": [
+    "tardó demasiado",
+    "command timed out",
+    "timed out after"
+   ],
+   "significa": "Un paso duró más de lo previsto (conexión lenta u ordenador ocupado).",
+   "arreglo": "Vuelve a lanzar el mismo paso: todo es reanudable y lo hecho no se repite.",
+   "origen": "esperado"
+  },
+  {
+   "id": "nombre-largo",
+   "so": [
+    "windows"
+   ],
+   "cuando": "descomprimir, npm ci",
+   "texto": "[WinError 206] The filename or extension is too long",
+   "patrones": [
+    "winerror 206",
+    "filename or extension is too long",
+    "enametoolong"
+   ],
+   "significa": "La carpeta de tu fábrica está metida muy adentro y algunas rutas pasan del límite de Windows (260 letras).",
+   "arreglo": "Usa una carpeta corta: C:\\fabrica. Cierra Claude, mueve la carpeta (o empieza de nuevo ahí) y repite /fabrica:instalar.",
+   "origen": "esperado"
+  },
+  {
+   "id": "acceso-denegado",
+   "so": [
+    "windows"
+   ],
+   "cuando": "descomprimir, npm ci, render",
+   "texto": "PermissionError: [WinError 5] Access is denied   (npm: EPERM: operation not permitted, rename …)",
+   "patrones": [
+    "winerror 5",
+    "access is denied",
+    "eperm",
+    "operation not permitted",
+    "winerror 32",
+    "being used by another process"
+   ],
+   "significa": "Otro programa tiene abierto ese archivo: casi siempre el antivirus revisándolo, OneDrive sincronizándolo, o Blender/el vídeo abiertos.",
+   "arreglo": "Espera un minuto y repite. Cierra Blender y el reproductor de vídeo. Si tu carpeta está en OneDrive, muévela a C:\\fabrica.",
+   "origen": "esperado"
+  },
+  {
+   "id": "antivirus-virus",
+   "so": [
+    "windows"
+   ],
+   "cuando": "descargas",
+   "texto": "Operation did not complete successfully because the file contains a virus or potentially unwanted software.",
+   "patrones": [
+    "contains a virus or potentially unwanted software",
+    "winerror 225"
+   ],
+   "significa": "El antivirus ha bloqueado un programa descargado (falso positivo frecuente con herramientas de vídeo sin firma).",
+   "arreglo": "Seguridad de Windows → Protección contra virus → Historial de protección → el elemento bloqueado → Acciones → Permitir. Luego repite el paso. Todas las descargas se comprueban con su huella oficial (SHA-256).",
+   "origen": "esperado"
+  },
+  {
+   "id": "windows-dll",
+   "so": [
+    "windows"
+   ],
+   "cuando": "whisper",
+   "texto": "The code execution cannot proceed because MSVCP140.dll was not found. Reinstalling the program may fix this problem.  (o: código 0xC0000135)",
+   "patrones": [
+    "msvcp140.dll",
+    "vcruntime140",
+    "vcomp140.dll",
+    "0xc0000135",
+    "-1073741515",
+    "falta una dll"
+   ],
+   "significa": "A whisper le faltan las librerías de C++ de Microsoft. El instalador las copia a su lado (sin permisos de administrador); si ves esto, esa copia no llegó.",
+   "arreglo": "Repite el paso de herramientas con --forzar whisper. Si sigue: instala «Microsoft Visual C++ Redistributable x64» (winget install Microsoft.VCRedist.2015+.x64; Windows pedirá permiso).",
+   "origen": "esperado"
+  },
+  {
+   "id": "mac-rosetta",
+   "so": [
+    "mac"
+   ],
+   "cuando": "Rhubarb",
+   "texto": "Bad CPU type in executable",
+   "patrones": [
+    "bad cpu type in executable",
+    "no he podido instalar rosetta"
+   ],
+   "significa": "Rhubarb (los labios) es un programa para Mac con Intel; tu Mac con chip Apple lo ejecuta con Rosetta, que no está instalada.",
+   "arreglo": "Abre la app Terminal y escribe: softwareupdate --install-rosetta --agree-to-license (puede pedir la contraseña de tu Mac). Luego repite /fabrica:instalar.",
+   "origen": "documentado"
+  },
+  {
+   "id": "mac-gatekeeper",
+   "so": [
+    "mac"
+   ],
+   "cuando": "Rhubarb, ffmpeg",
+   "texto": "\"rhubarb\" Not Opened. Apple could not verify \"rhubarb\" is free of malware that may harm your Mac or compromise your privacy.  (macOS 14 y antes: \"rhubarb\" cannot be opened because the developer cannot be verified.)",
+   "patrones": [
+    "apple could not verify",
+    "cannot be opened because the developer cannot be verified",
+    "com.apple.quarantine"
+   ],
+   "significa": "macOS bloquea programas descargados que no vienen de la App Store. El instalador quita esa marca de los suyos; esto pasa si copiaste algo a mano desde el navegador.",
+   "arreglo": "Pulsa «Hecho» (no «Mover a la papelera») y ejecuta en Terminal: xattr -dr com.apple.quarantine ~/fabrica/tools  — o Ajustes del Sistema → Privacidad y seguridad → «Abrir igualmente».",
+   "origen": "documentado"
+  },
+  {
+   "id": "mac-sin-herramientas",
+   "so": [
+    "mac"
+   ],
+   "cuando": "whisper.cpp",
+   "texto": "xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun",
+   "patrones": [
+    "invalid active developer path",
+    "missing xcrun",
+    "herramientas de apple",
+    "xcode-select --install"
+   ],
+   "significa": "Faltan las herramientas de línea de comandos de Apple (las necesitan git y whisper.cpp).",
+   "arreglo": "En Terminal: xcode-select --install → acepta la ventana de Apple → espera a que termine (10–20 min) → repite /fabrica:instalar.",
+   "origen": "documentado"
+  },
+  {
+   "id": "mac-brew-no-encontrado",
+   "so": [
+    "mac"
+   ],
+   "cuando": "Homebrew",
+   "texto": "zsh: command not found: brew",
+   "patrones": [
+    "command not found: brew"
+   ],
+   "significa": "Homebrew no está instalado o no está en el PATH (se saltó el paso «Next steps» del instalador de Homebrew).",
+   "arreglo": "No hace falta Homebrew: el instalador de la fábrica construye whisper.cpp sin él. Si ya lo instalaste, ejecuta las dos líneas de «Next steps» que te enseñó (echo … >> ~/.zprofile y eval …) y abre una terminal nueva.",
+   "origen": "documentado"
+  },
+  {
+   "id": "mac-intel",
+   "so": [
+    "mac"
+   ],
+   "cuando": "Blender",
+   "texto": "Blender 5 solo funciona en Mac con chip Apple (M1 o posterior)",
+   "patrones": [
+    "mac con chip apple",
+    "mac-intel"
+   ],
+   "significa": "Tu Mac tiene procesador Intel; Blender 5.2 solo existe para Mac con chip Apple (M1, M2…).",
+   "arreglo": "La fábrica no está guiada en Mac Intel. Opciones: otro ordenador (Windows, Linux o Mac con chip Apple) o preguntar en el canal del curso.",
+   "origen": "documentado"
+  },
+  {
+   "id": "linux-sudo",
+   "so": [
+    "linux"
+   ],
+   "cuando": "cualquier paso",
+   "texto": "sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper",
+   "patrones": [
+    "a terminal is required to read the password",
+    "sudo: a password is required"
+   ],
+   "significa": "Algo intentó usar sudo (permisos de administrador). Claude no puede escribir tu contraseña, y la fábrica no la necesita.",
+   "arreglo": "Di a Claude: «no uses sudo; usa el instalador de la fábrica». Todo se instala en tu carpeta, sin contraseña.",
+   "origen": "documentado"
+  },
+  {
+   "id": "linux-libs-chrome",
+   "so": [
+    "linux"
+   ],
+   "cuando": "montaje (Remotion)",
+   "texto": "error while loading shared libraries: libnss3.so: cannot open shared object file: No such file or directory",
+   "patrones": [
+    "libnss3",
+    "libgbm",
+    "libasound",
+    "libatk",
+    "chrome-headless-shell"
+   ],
+   "significa": "El navegador invisible que monta el vídeo necesita librerías que un Linux de escritorio trae siempre, pero tu sistema no.",
+   "arreglo": "Necesita a alguien con la contraseña de administrador, una sola vez: sudo apt install libnss3 libgbm1 libasound2t64 libatk-bridge2.0-0 libxkbcommon0 (en Ubuntu 22.04: libasound2 en vez de libasound2t64).",
+   "origen": "esperado"
+  },
+  {
+   "id": "linux-libs-blender",
+   "so": [
+    "linux"
+   ],
+   "cuando": "Blender",
+   "texto": "blender: error while loading shared libraries: libX11.so.6: cannot open shared object file: No such file or directory",
+   "patrones": [
+    "libx11\\.so",
+    "libxrender",
+    "libxi\\.so",
+    "libxkbcommon",
+    "libsm\\.so",
+    "libxxf86vm",
+    "libegl\\.so"
+   ],
+   "significa": "A Blender le faltan librerías gráficas que trae cualquier Linux con escritorio (falta en servidores o instalaciones mínimas).",
+   "arreglo": "Con quien tenga la contraseña: sudo apt install libx11-6 libxrender1 libxi6 libxkbcommon0 libsm6 libxxf86vm1 libegl1 libgl1. La fábrica está guiada en Ubuntu 22.04+/Debian 12+/Mint 21+ CON escritorio, que ya las traen.",
+   "origen": "probado"
+  },
+  {
+   "id": "glibc-vieja",
+   "so": [
+    "linux"
+   ],
+   "cuando": "whisper.cpp, Blender",
+   "texto": "version `GLIBC_2.34' not found (required by …/whisper-cli)",
+   "patrones": [
+    "glibc_2\\.[0-9]+' not found",
+    "glibcxx_3\\.4\\.[0-9]+' not found"
+   ],
+   "significa": "Tu Linux es más antiguo que lo que piden estos programas (hace falta Ubuntu 22.04, Debian 12, Mint 21 o más nuevo).",
+   "arreglo": "El instalador intenta construir whisper.cpp en tu ordenador. Si no puede: actualiza el sistema a una versión guiada.",
+   "origen": "esperado"
+  },
+  {
+   "id": "eevee-sin-gpu",
+   "so": [
+    "todos"
+   ],
+   "cuando": "humo / render",
+   "texto": "Blender: Unable to open a display / Failed to create GPU context / EGL error",
+   "patrones": [
+    "unable to open a display",
+    "failed to create gpu context",
+    "\\begl\\b",
+    "\\bopengl\\b",
+    "gpu backend",
+    "no se pudo iniciar la gráfica"
+   ],
+   "significa": "Tu ordenador no tiene una gráfica que Blender pueda usar para el motor rápido (EEVEE): pasa en máquinas virtuales y portátiles muy viejos.",
+   "arreglo": "El instalador lo detecta y cambia solo al motor Cycles (más lento, sin gráfica) apuntando REELS_RENDER_ENGINE=cycles en tu .env. Para vídeos largos, el render en la nube.",
+   "origen": "esperado"
+  },
+  {
+   "id": "ffmpeg-viejo",
+   "so": [
+    "linux"
+   ],
+   "cuando": "doctor, voces",
+   "texto": "[Parsed_afir_0] Option 'irnorm' not found",
+   "patrones": [
+    "option 'irnorm' not found",
+    "ffmpeg es demasiado viejo",
+    "irnorm"
+   ],
+   "significa": "Se está usando un ffmpeg antiguo (el de apt en Ubuntu 22.04/24.04 es 4.4/6.1); la fábrica necesita el 7 o más.",
+   "arreglo": "No instales ffmpeg con apt. Repite el paso de herramientas: deja su propio ffmpeg en tools/ y lo apunta en .env (FFMPEG_BIN).",
+   "origen": "probado"
+  },
+  {
+   "id": "whisper-modelo",
+   "so": [
+    "todos"
+   ],
+   "cuando": "comprobación (check)",
+   "texto": "whisper_init_from_file_with_params_no_state: failed to open 'models/ggml-small.bin'   /   error: failed to initialize whisper context",
+   "patrones": [
+    "failed to open '.*ggml",
+    "failed to initialize whisper context",
+    "falta models/ggml-small.bin"
+   ],
+   "significa": "Falta el modelo del «oído» (o está a medias).",
+   "arreglo": "Repite el paso de herramientas con «modelo»: lo baja y comprueba su huella. O: uv run reels descargar-modelo.",
+   "origen": "esperado"
+  },
+  {
+   "id": "python-unicode",
+   "so": [
+    "windows"
+   ],
+   "cuando": "cualquier comando",
+   "texto": "UnicodeEncodeError: 'charmap' codec can't encode character '\\u2714' in position 0: character maps to <undefined>",
+   "patrones": [
+    "'charmap' codec can't",
+    "unicodeencodeerror",
+    "unicodedecodeerror"
+   ],
+   "significa": "Windows intentó escribir ✔ o una tilde con su juego de letras antiguo. La fábrica fuerza UTF-8; si lo ves, es un programa externo o una versión vieja.",
+   "arreglo": "Actualiza la fábrica (/fabrica:actualizar) y repite. Copia el error entero al tutor (/fabrica:tarrito).",
+   "origen": "esperado"
+  },
+  {
+   "id": "uv-sin-python",
+   "so": [
+    "todos"
+   ],
+   "cuando": "dependencias",
+   "texto": "error: No interpreter found for Python 3.12 in managed installations or search path",
+   "patrones": [
+    "no interpreter found for python",
+    "failed to download cpython",
+    "python-build-standalone"
+   ],
+   "significa": "uv no ha podido descargar Python 3.12 (red bloqueada o cortada).",
+   "arreglo": "Repite el paso con internet estable. En redes con antivirus que revisa HTTPS, el instalador ya usa los certificados del sistema (UV_SYSTEM_CERTS=1).",
+   "origen": "esperado"
+  },
+  {
+   "id": "npm-red",
+   "so": [
+    "todos"
+   ],
+   "cuando": "dependencias (npm ci)",
+   "texto": "npm error code ECONNRESET   (o: npm error network request to https://registry.npmjs.org/… failed)",
+   "patrones": [
+    "npm error code econnreset",
+    "npm err! code econnreset",
+    "npm error network",
+    "etarget",
+    "npm error code e"
+   ],
+   "significa": "Se cortó la descarga de las piezas de Remotion (las pantallas y el montaje).",
+   "arreglo": "Repite el paso de dependencias. Si sigue, prueba otra red.",
+   "origen": "esperado"
+  },
+  {
+   "id": "carpeta-onedrive",
+   "so": [
+    "windows",
+    "mac"
+   ],
+   "cuando": "elegir carpeta",
+   "texto": "<carpeta> está dentro de OneDrive (o iCloud / Dropbox / Google Drive)",
+   "patrones": [
+    "está dentro de onedrive",
+    "está dentro de icloud",
+    "está dentro de dropbox",
+    "onedrive"
+   ],
+   "significa": "Esa carpeta se sincroniza con la nube: el render crea miles de archivos temporales y la sincronización los bloquea a medias.",
+   "arreglo": "Usa C:\\fabrica (Windows) o la carpeta fabrica dentro de tu carpeta personal (Mac). No dentro de Documentos/Escritorio si están en OneDrive o iCloud.",
+   "origen": "documentado"
+  },
+  {
+   "id": "no-es-proyecto",
+   "so": [
+    "todos"
+   ],
+   "cuando": "/fabrica:tarrito comprobar, /fabrica:actualizar",
+   "texto": "en … todavía no hay una fábrica (¿estás en la carpeta de tu fábrica?)",
+   "patrones": [
+    "estás en la carpeta de tu fábrica",
+    "no-es-proyecto",
+    "no es una fábrica"
+   ],
+   "significa": "Claude Code está abierto en otra carpeta, no en la de tu fábrica.",
+   "arreglo": "Sal (/exit), entra en tu carpeta (cd C:\\fabrica o cd ~/fabrica) y abre claude ahí; dentro, la orden es /tarrito comprobar. Si aún no la has instalado: antes de instalar solo se comprueban los lotes 0·2, 1·1 y 1·3; para el resto, primero /fabrica:instalar.",
+   "origen": "probado"
+  },
+  {
+   "id": "limite-claude",
+   "so": [
+    "todos"
+   ],
+   "cuando": "cualquier momento",
+   "texto": "Claude usage limit reached. Your limit will reset at 3pm.  (el texto exacto cambia con la versión)",
+   "patrones": [
+    "usage limit",
+    "limit will reset",
+    "rate limit"
+   ],
+   "significa": "Has gastado el uso incluido en tu plan durante este rato. No te cobran nada más: hay que esperar.",
+   "arreglo": "Espera a la hora que indica y escribe: «sigue donde lo dejaste». Nada se pierde: el trabajo está en tu carpeta.",
+   "origen": "esperado"
+  },
+  {
+   "id": "anthropic-api-key",
+   "so": [
+    "todos"
+   ],
+   "cuando": "doctor",
+   "texto": "ANTHROPIC_API_KEY está puesta en tu sistema: Claude Code la usará y te cobrará por uso en vez de usar tu suscripción",
+   "patrones": [
+    "anthropic_api_key"
+   ],
+   "significa": "Hay una clave de la API de Anthropic en tu sistema; Claude Code la prefiere y cobra por uso.",
+   "arreglo": "Quítala (el doctor te da el comando exacto para tu sistema) y abre una terminal nueva.",
+   "origen": "probado"
+  },
+  {
+   "id": "elevenlabs-401",
+   "so": [
+    "todos"
+   ],
+   "cuando": "voces (más adelante)",
+   "texto": "HTTP 401 · {\"detail\":{\"status\":\"invalid_api_key\",\"message\":\"Invalid API key\"}}",
+   "patrones": [
+    "invalid_api_key",
+    "elevenlabs_api_key .*no funciona",
+    "http 401"
+   ],
+   "significa": "La clave de ElevenLabs de tu .env está mal copiada o la borraste en su web.",
+   "arreglo": "Abre .env con el editor (no la pegues en el chat), copia otra vez la clave desde elevenlabs.io → Developers → API keys y guarda.",
+   "origen": "esperado"
+  },
+  {
+   "id": "plantilla-no-encontrada",
+   "so": [
+    "todos"
+   ],
+   "cuando": "/fabrica:instalar",
+   "texto": "no encuentro la plantilla de la fábrica ni puedo descargarla",
+   "patrones": [
+    "no encuentro la plantilla"
+   ],
+   "significa": "El plugin está, pero no la carpeta con la fábrica que se copia a tu ordenador (y no hay internet para bajarla).",
+   "arreglo": "Actualiza el marketplace (/plugin → Marketplaces → tarritoai → Update) y repite con internet.",
+   "origen": "esperado"
+  },
+  {
+   "id": "settings-invalido",
+   "so": [
+    "todos"
+   ],
+   "cuando": "ajustes",
+   "texto": "no toco …/settings.json: no es un JSON válido (…)",
+   "patrones": [
+    "no toco .*settings.json"
+   ],
+   "significa": "Tu archivo de ajustes de Claude Code tiene un error de formato; el instalador no lo toca para no romperlo más.",
+   "arreglo": "Activa las actualizaciones a mano: /plugin → Marketplaces → tarritoai → Enable auto-update; y el idioma con /config.",
+   "origen": "esperado"
+  },
+  {
+   "id": "herramienta-no-arranca",
+   "so": [
+    "todos"
+   ],
+   "cuando": "herramientas",
+   "texto": "<programa> se ha instalado pero no arranca: <motivo>",
+   "patrones": [
+    "se ha instalado pero no arranca",
+    "-no-arranca"
+   ],
+   "significa": "El programa se descargó bien (huella comprobada) pero tu sistema no lo deja ejecutarse.",
+   "arreglo": "Mira el motivo que sale detrás de «no arranca» y búscalo en esta tabla (DLL, Rosetta, GLIBC, librerías). Si no está, pásale el error entero a /fabrica:tarrito.",
+   "origen": "esperado"
+  },
+  {
+   "id": "plataforma-no-soportada",
+   "so": [
+    "todos"
+   ],
+   "cuando": "herramientas",
+   "texto": "<programa> no publica versión para <sistema>",
+   "patrones": [
+    "no publica versión para",
+    "no hay de dónde descargarlo"
+   ],
+   "significa": "Tu combinación de sistema y procesador (p. ej. Linux en ARM) no tiene versión oficial de alguna pieza.",
+   "arreglo": "La fábrica está guiada en Windows 10/11 (x64), Mac con chip Apple y Linux x64 (Ubuntu 22.04+, Debian 12+, Mint 21+).",
+   "origen": "documentado"
+  },
+  {
+   "id": "uv-falta",
+   "so": [
+    "todos"
+   ],
+   "cuando": "arranque del instalador",
+   "texto": "No he podido instalar uv",
+   "patrones": [
+    "no he podido instalar uv",
+    "no encuentro uv",
+    "uv: command not found",
+    "'uv' is not recognized"
+   ],
+   "significa": "uv (el ayudante que trae Python) no se ha instalado, casi siempre por la red.",
+   "arreglo": "Repite /fabrica:instalar con internet. A mano: Mac/Linux curl -LsSf https://astral.sh/uv/install.sh | sh · Windows powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"; luego abre una terminal nueva.",
+   "origen": "documentado"
+  },
+  {
+   "id": "carpeta-no-vacia",
+   "so": [
+    "todos"
+   ],
+   "cuando": "elegir carpeta",
+   "texto": "no uso <carpeta>: ya tiene otros archivos: la fábrica necesita una carpeta para ella sola",
+   "patrones": [
+    "necesita una carpeta para ella sola",
+    "carpeta-no-vacia"
+   ],
+   "significa": "La carpeta elegida ya tiene cosas tuyas; la fábrica crea muchas carpetas y no queremos mezclarlas con lo tuyo.",
+   "arreglo": "Elige una carpeta nueva o vacía (la recomendada: C:\\fabrica en Windows, ~/fabrica en Mac y Linux). Si ahí ya había una fábrica, el instalador la reconoce y la repara sin tocar nada tuyo.",
+   "origen": "probado"
+  },
+  {
+   "id": "en-marcha",
+   "so": [
+    "todos"
+   ],
+   "cuando": "cualquier paso",
+   "texto": "ya hay otra instalación trabajando en esta carpeta (proceso <número>)",
+   "patrones": [
+    "ya hay otra instalación trabajando"
+   ],
+   "significa": "Se lanzó el mismo paso dos veces a la vez (dos ventanas de Claude, o se repitió sin esperar).",
+   "arreglo": "Espera a que la otra termine (o cierra esa ventana) y repite el paso. Si no hay ninguna otra abierta, borra el archivo .fabrica/en-marcha.lock de tu carpeta.",
+   "origen": "probado"
+  },
+  {
+   "id": "whisper-libgomp",
+   "so": [
+    "linux"
+   ],
+   "cuando": "whisper.cpp",
+   "texto": "whisper-cli: error while loading shared libraries: libgomp.so.1: cannot open shared object file: No such file or directory",
+   "patrones": [
+    "libgomp\\.so"
+   ],
+   "significa": "A whisper.cpp le falta la librería OpenMP de GCC (viene en los Linux con escritorio; falta en instalaciones mínimas).",
+   "arreglo": "El instalador la trae solo, sin contraseña (apt-get download libgomp1 + dpkg-deb -x, junto a whisper-cli). Si aun así falla: con contraseña, sudo apt install libgomp1.",
+   "origen": "probado"
+  }
+ ]
+}

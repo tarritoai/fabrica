@@ -1,0 +1,27 @@
+{
+  "id": "voz_ar",
+  "display_name": "Persona (Argentina)",
+  "offscreen": true,
+  "subtitle_color": "#ffd9a8",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "9rvdnhrYoXoUt4igKpBw",
+    "name": "Mariana - Intimate and Assertive",
+    "settings": {
+      "stability": 0.45,
+      "similarity_boost": 0.75,
+      "style": 0.35
+    }
+  },
+  "emotions": [
+    "neutral"
+  ],
+  "actions": [
+    "idle"
+  ],
+  "space": {
+    "noche": "luz"
+  },
+  "level_db": -7.0,
+  "on_phone": false
+}

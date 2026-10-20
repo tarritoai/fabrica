@@ -1,0 +1,60 @@
+{
+  "id": "taza",
+  "display_name": "Taza",
+  "role": "cosa",
+  "description": "La cosa por defecto de la plantilla: una taza de cerámica con cara (constructor «objeto con cara»). Cámbiala por la tuya con /personaje.",
+  "height": 0.42,
+  "subtitle_color": "#9cc8e8",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "C96EBIpeVkPIxiJ0E16Y",
+    "name": "Maria - Warm & Energetic (biblioteca pública de ElevenLabs)",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.25
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "shrug",
+    "lean_in",
+    "recoil",
+    "slump"
+  ],
+  "placeholder": {
+    "shape": "object"
+  },
+  "object": {
+    "form": "taza",
+    "colors": {
+      "body": "#ece5d6",
+      "accent": "#3f7fb5",
+      "detail": "#3f7fb5",
+      "inside": "#4a2a17"
+    },
+    "face": {
+      "brows": "barra",
+      "cheeks": "#f0a08a"
+    },
+    "accessories": [
+      {
+        "type": "vapor"
+      }
+    ]
+  },
+  "emotion_overrides": {},
+  "blink": "normal",
+  "voice_note": "Voz de ejemplo de la biblioteca pública (latinoamericana neutra). Para tu cosa, haz tu casting con /personaje."
+}

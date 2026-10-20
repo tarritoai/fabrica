@@ -1,0 +1,66 @@
+{
+  "id": "lucio",
+  "display_name": "Lucio",
+  "role": "cosa",
+  "description": "Lámpara de escritorio articulada. Solo vive de noche, ve todos los apuntes, se funde, y le apagan para «dormir cinco minutos». Su luz es parte de cómo actúa.",
+  "height": 0.78,
+  "subtitle_color": "#9fd8b5",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "YBH8bg1ttJ1zbliQt2mu",
+    "name": "Roberto - Conversational",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.25
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "shrug",
+    "lean_in",
+    "recoil",
+    "slump",
+    "stretch"
+  ],
+  "placeholder": {
+    "shape": "object"
+  },
+  "object": {
+    "form": "lampara",
+    "colors": {
+      "body": "#6fae8c",
+      "accent": "#2b2d33",
+      "detail": "#c9a44c",
+      "inside": "#f3e6c4"
+    },
+    "finish": {
+      "body": "esmalte",
+      "accent": "mate",
+      "detail": "metal"
+    },
+    "face": {
+      "brows": "barra",
+      "height": 0.46,
+      "size": 1.0
+    },
+    "light": {
+      "color": "#ffcf8a",
+      "power": 1.0
+    }
+  },
+  "emotion_overrides": {},
+  "blink": "normal",
+  "voice_note": "Casting 2026-10-20 (frente a Carlos Mestre y Juan Perdomo): el timbre más cálido y cercano, como alguien en tu cuarto; el susurro baja de verdad; el acento más neutro. Lo seco de Lucio va en cómo se escriben sus frases, no en la voz."
+}

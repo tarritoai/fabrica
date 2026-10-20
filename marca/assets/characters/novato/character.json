@@ -1,0 +1,60 @@
+{
+  "id": "novato",
+  "display_name": "Prota",
+  "height": 1.7,
+  "head_offset": [
+    0,
+    0,
+    1.45
+  ],
+  "subtitle_color": "#ffffff",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "7QQzpAyzlKTVrRzQJmTE",
+    "name": "voz del prota (de ejemplo)",
+    "settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.75,
+      "style": 0.3
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "present_gesture",
+    "shrug",
+    "facepalm",
+    "lean_in",
+    "look_phone",
+    "recoil",
+    "slump",
+    "phone_ear"
+  ],
+  "placeholder": {
+    "shape": "human",
+    "color": "#4a6fa5",
+    "head_color": "#e8b48a",
+    "hair_color": "#5a3a22"
+  },
+  "human": {
+    "skin": "#d99a72",
+    "skin_dark": "#c4835e",
+    "hoodie": "#2f5d46",
+    "hoodie_dark": "#244a37",
+    "jeans": "#27324a",
+    "hair": "#3a2414",
+    "stubble": true
+  },
+  "role": "humano",
+  "voice_note": "Voz de ejemplo heredada del proyecto original: puede no estar disponible en tu cuenta de ElevenLabs. Elige una de la biblioteca pública y pega aquí su voice_id."
+}

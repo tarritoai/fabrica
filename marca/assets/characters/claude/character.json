@@ -1,0 +1,78 @@
+{
+  "id": "claude",
+  "display_name": "Tarro",
+  "height": 0.9,
+  "head_offset": [
+    0,
+    0,
+    0.55
+  ],
+  "subtitle_color": "#ff8a3d",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "5egO01tkUjEzu7xSSE8M",
+    "name": "Carmelo",
+    "settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.75,
+      "style": 0.2
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "shrug",
+    "lean_in",
+    "recoil",
+    "slump",
+    "turn_away"
+  ],
+  "placeholder": {
+    "shape": "ceramic",
+    "color": "#c86a45"
+  },
+  "ceramic": {
+    "color": "#a84f2c",
+    "dark": "#6e2c1a",
+    "seed": 11,
+    "variant": "loaf",
+    "glaze": "#1f9e9a",
+    "groove": "#94452a"
+  },
+  "emotion_overrides": {
+    "alarma": {
+      "eye_s": 0.6,
+      "eye_z": 0.7
+    },
+    "panico": {
+      "eye_s": 0.5,
+      "eye_z": 0.6
+    },
+    "aliviado": {
+      "eye_z": 0.5,
+      "brow_z": 0.014,
+      "brow_tilt": -3,
+      "head_y": 9
+    },
+    "hundido": {
+      "brow_tilt": 30,
+      "head_x": 7
+    },
+    "juzgando": {
+      "head_x": 2
+    }
+  },
+  "blink": "slow",
+  "role": "cosa",
+  "voice_note": "Carmelo (biblioteca pública de ElevenLabs, español peninsular en eleven_v4)."
+}

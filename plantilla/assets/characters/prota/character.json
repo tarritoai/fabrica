@@ -1,0 +1,28 @@
+{
+  "id": "prota",
+  "display_name": "Prota",
+  "role": "humano",
+  "description": "El humano por defecto de la plantilla: una persona cualquiera, ni chico ni chica marcados, pelo corto, sudadera azul petróleo. Cámbialo por el tuyo con /personaje.",
+  "height": 1.7,
+  "head_offset": [0, 0, 1.45],
+  "subtitle_color": "#ffffff",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "",
+    "name": "(elige una voz de la biblioteca pública de ElevenLabs con /personaje)",
+    "settings": {"stability": 0.45, "similarity_boost": 0.75, "style": 0.3}
+  },
+  "emotions": ["neutral", "orgulloso", "confuso", "alarma", "juzgando", "hundido", "panico", "aliviado"],
+  "actions": ["idle", "talk_gesture", "present_gesture", "shrug", "facepalm", "lean_in", "look_phone", "recoil", "slump", "phone_ear", "stretch"],
+  "placeholder": {"shape": "human"},
+  "human": {
+    "skin": "#b98466",
+    "skin_dark": "#a06f53",
+    "hoodie": "#2f6a73",
+    "hoodie_dark": "#24545b",
+    "jeans": "#2c3140",
+    "hair": "#2a1d16",
+    "hair_style": "curly",
+    "stubble": false
+  }
+}

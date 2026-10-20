@@ -1,0 +1,14 @@
+{
+  "name": "fabrica",
+  "displayName": "La fábrica",
+  "version": "0.1.2",
+  "description": "Instala tu fábrica de reels sin permisos de administrador (/fabrica:instalar), te ayuda cuando algo falla (/fabrica:tarrito) y la mantiene al día sin tocar tu memoria (/fabrica:actualizar).",
+  "author": {
+    "name": "tarritoai",
+    "url": "https://github.com/tarritoai"
+  },
+  "homepage": "https://github.com/tarritoai/fabrica",
+  "repository": "https://github.com/tarritoai/fabrica",
+  "license": "MIT",
+  "keywords": ["curso", "reels", "video", "blender", "remotion", "espanol"]
+}

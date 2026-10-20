@@ -1,0 +1,997 @@
+{
+ "_ayuda": "Una comprobación por lote del temario v2: la ÚNICA fuente de verdad de los entregables. La lee .claude/skills/tarrito/comprobar.py: dentro de tu fábrica, /tarrito comprobar [lote]; antes de instalar, /fabrica:tarrito comprobar (que, si la fábrica ya existe, delega en ese mismo script). Tipos: archivo, video, json, jsonl, sin_huecos, items, titulos, contiene, no_contiene, regex, tabla, pregunta, sistema, carpeta, sin_api_key, doctor, comando, lotes. «solo_tuyos» ignora los episodios de ejemplo (lista «ejemplos»). Sellos en curso/progreso.json.",
+ "version": 2,
+ "ejemplos": [
+  "humo",
+  "ejemplo-*",
+  "lampara-de-las-tres",
+  "cafeteria-moka"
+ ],
+ "lotes": [
+  {
+   "lote": "0·1",
+   "sala": 0,
+   "titulo": "La visita",
+   "entregable": "haber visto la nave (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Qué pone en la silla vacía de la nave?",
+     "respuestas": [
+      "mandas tu"
+     ],
+     "falta": "Casi. Vuelve a mirar la silla del final del vídeo 0·1."
+    }
+   ],
+   "aprobado": "Pasa. La silla es tuya."
+  },
+  {
+   "lote": "0·2",
+   "sala": 0,
+   "titulo": "Antes de entrar",
+   "entregable": "«¿Sirve mi computadora?» en verde",
+   "comprobaciones": [
+    {
+     "tipo": "sistema"
+    }
+   ],
+   "aprobado": "Tu computadora sirve. Una preocupación menos."
+  },
+  {
+   "lote": "1·1",
+   "sala": 1,
+   "titulo": "Tu carpeta y la terminal",
+   "entregable": "la carpeta de tu fábrica, corta y fuera de la nube (OneDrive, iCloud, Dropbox, Google Drive)",
+   "comprobaciones": [
+    {
+     "tipo": "carpeta"
+    }
+   ],
+   "aprobado": "Carpeta en su sitio. Ni OneDrive ni iCloud: bien."
+  },
+  {
+   "lote": "1·2",
+   "sala": 1,
+   "titulo": "Si algo se tuerce",
+   "entregable": "saber pedir ayuda (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Si ves un error en rojo y quieres pedir ayuda, ¿qué copias: la última línea o el error entero?",
+     "respuestas": [
+      "entero",
+      "todo",
+      "completo",
+      "error entero"
+     ],
+     "falta": "No. La última línea casi nunca basta: se copia el error entero."
+    }
+   ],
+   "aprobado": "Un error rojo significa «no te he entendido». Nada más."
+  },
+  {
+   "lote": "1·3",
+   "sala": 1,
+   "titulo": "Claude Pro y Claude Code",
+   "entregable": "Claude Code usando tu suscripción (sin ANTHROPIC_API_KEY)",
+   "comprobaciones": [
+    {
+     "tipo": "sin_api_key"
+    }
+   ],
+   "aprobado": "Claude Code usa tu suscripción. Nada de facturas sorpresa."
+  },
+  {
+   "lote": "1·4",
+   "sala": 1,
+   "titulo": "Instalar tu fábrica",
+   "entregable": "la fábrica instalada con /fabrica:instalar y reels doctor sin nada en rojo",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": ".fabrica/plantilla.json",
+     "falta": "No encuentro .fabrica/plantilla.json: tu fábrica no se instaló con /fabrica:instalar. Repítelo: lo que ya está no se repite."
+    },
+    {
+     "tipo": "doctor",
+     "timeout": 600,
+     "falta": "El doctor marca piezas en rojo: repite /fabrica:instalar (lo que ya está no se repite) o ejecuta el comando que te da `uv run reels doctor`."
+    }
+   ],
+   "aprobado": "Taller montado. Todas las piezas en su sitio."
+  },
+  {
+   "lote": "1·5",
+   "sala": 1,
+   "titulo": "Tu primer vídeo feo",
+   "entregable": "episodes/humo/final.mp4 (un vídeo de verdad: ≥200 KB y ≥4 s)",
+   "comprobaciones": [
+    {
+     "tipo": "video",
+     "ruta": "episodes/humo/final.mp4",
+     "min_bytes": 200000,
+     "min_segundos": 4,
+     "falta": "No encuentro episodes/humo/final.mp4: haz /humo (gratis, unos minutos) o repite el paso del primer vídeo de /fabrica:instalar."
+    }
+   ],
+   "aprobado": "Tu fábrica ya escupe vídeos. Feos, pero tuyos."
+  },
+  {
+   "lote": "1·6",
+   "sala": 1,
+   "titulo": "Tu cuenta de publicar",
+   "entregable": "tu @ guardado en assets/brand/brand.json",
+   "comprobaciones": [
+    {
+     "tipo": "json",
+     "ruta": "assets/brand/brand.json",
+     "campos_no_vacios": [
+      "handle"
+     ],
+     "falta": "Dile a Claude tu @ («mi cuenta es @…») para que lo guarde en assets/brand/brand.json (campo handle). Aún no publiques nada."
+    }
+   ],
+   "aprobado": "Cuenta apuntada. Todavía no se publica nada: paciencia."
+  },
+  {
+   "lote": "2·1",
+   "sala": 2,
+   "titulo": "Un ayudante que actúa",
+   "entregable": "saber quién decide (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Quién decide si Claude Code puede ejecutar un comando en tu computadora?",
+     "respuestas": [
+      "yo",
+      "tu",
+      "mi",
+      "jefe",
+      "jefa",
+      "quien manda",
+      "mando",
+      "el usuario",
+      "la usuaria"
+     ],
+     "falta": "No. Claude Code pide permiso; decides tú."
+    }
+   ],
+   "aprobado": "Exacto. Claude actúa; tú decides."
+  },
+  {
+   "lote": "2·2",
+   "sala": 2,
+   "titulo": "La memoria vive en la carpeta",
+   "entregable": "el apartado «Sobre quien manda» de CLAUDE.md, rellenado",
+   "comprobaciones": [
+    {
+     "tipo": "sin_huecos",
+     "ruta": "CLAUDE.md",
+     "seccion": "## Sobre quien manda",
+     "falta": "En CLAUDE.md, el apartado «Sobre quien manda» sigue con huecos: cuéntale a Claude cómo te llamas, a qué te dedicas y cuánto tiempo tienes por semana, y que lo guarde ahí."
+    }
+   ],
+   "aprobado": "Ahora cualquier chat sabe quién manda. Lo pone en la carpeta."
+  },
+  {
+   "lote": "2·3",
+   "sala": 2,
+   "titulo": "Dieciséis trabajadores, un jefe",
+   "entregable": "conocer a tu plantilla (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Cuántos espectadores tiene tu fábrica?",
+     "respuestas": [
+      "5",
+      "cinco"
+     ],
+     "falta": "No. Cuéntalos otra vez en el vídeo 2·3 (llevan palomitas)."
+    }
+   ],
+   "aprobado": "Cinco espectadores. Y ninguno decide: decides tú."
+  },
+  {
+   "lote": "2·4",
+   "sala": 2,
+   "titulo": "La cadena: de barato a caro",
+   "entregable": "saber dónde se gasta (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "En un episodio, ¿qué es lo primero que cuesta dinero?",
+     "respuestas": [
+      "voz",
+      "voces",
+      "la voz",
+      "elevenlabs"
+     ],
+     "falta": "No. Todo lo anterior es gratis o va con tu suscripción; lo primero que se paga aparte es otra cosa."
+    }
+   ],
+   "aprobado": "La voz. Por eso el guion se revisa entero antes."
+  },
+  {
+   "lote": "3·1",
+   "sala": 3,
+   "titulo": "Cómo pedir las cosas",
+   "entregable": "curso/ejercicios/feedback.md (3 correcciones)",
+   "comprobaciones": [
+    {
+     "tipo": "items",
+     "ruta": "curso/ejercicios/feedback.md",
+     "min": 3,
+     "falta": "Escribe tres correcciones con la fórmula «dónde + qué sientes (+ por qué)», una por línea empezando con un guion, y pídele a Claude que las guarde en curso/ejercicios/feedback.md.",
+     "falta_archivo": "No existe curso/ejercicios/feedback.md: dile a Claude «guarda mi hoja de feedback» con tus tres correcciones."
+    }
+   ],
+   "aprobado": "Así se pide: dónde, qué sientes y, si sabes, por qué."
+  },
+  {
+   "lote": "3·2",
+   "sala": 3,
+   "titulo": "Límites, chats nuevos y gasto",
+   "entregable": "saber retomar (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Se te cortó el chat a mitad de un episodio. ¿Qué escribes en un chat nuevo para seguir?",
+     "respuestas": [
+      "/episodio",
+      "episodio"
+     ],
+     "falta": "No. El estado del episodio está guardado; hay una orden que lo retoma."
+    }
+   ],
+   "aprobado": "/episodio <slug>. El estado lo recuerda todo."
+  },
+  {
+   "lote": "3·3",
+   "sala": 3,
+   "titulo": "Tu primer reel bonito",
+   "entregable": "una preview o un final del ejemplo en episodes/",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "rutas": [
+      "episodes/*/preview_*.mp4",
+      "episodes/*/final.mp4"
+     ],
+     "excluir": [
+      "episodes/humo/*"
+     ],
+     "min_bytes": 100000,
+     "falta": "No encuentro ninguna preview ni ningún final (aparte del humo) en episodes/: renderiza el reel de ejemplo que trae tu fábrica."
+    }
+   ],
+   "aprobado": "Esto ha salido de tu computadora."
+  },
+  {
+   "lote": "4·1",
+   "sala": 4,
+   "titulo": "Lo que enseñaron 230.000 visitas",
+   "entregable": "saber qué da alcance (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Qué da alcance: los «me gusta» o los compartidos?",
+     "respuestas": [
+      "compartidos",
+      "compartir",
+      "compartidas",
+      "envios",
+      "los compartidos"
+     ],
+     "falta": "No. Vuelve a las fichas de laboratorio del 4·1."
+    }
+   ],
+   "aprobado": "Los compartidos. Lo que se manda a alguien es lo que viaja."
+  },
+  {
+   "lote": "4·2",
+   "sala": 4,
+   "titulo": "Una relación, no un tema",
+   "entregable": "docs/territorio.md completo",
+   "comprobaciones": [
+    {
+     "tipo": "sin_huecos",
+     "ruta": "docs/territorio.md",
+     "falta": "docs/territorio.md tiene huecos sin rellenar: haz /nicho."
+    },
+    {
+     "tipo": "items",
+     "ruta": "docs/territorio.md",
+     "seccion": "## Verdades mecánicas",
+     "min": 5,
+     "falta": "Faltan verdades mecánicas en docs/territorio.md"
+    },
+    {
+     "tipo": "items",
+     "ruta": "docs/territorio.md",
+     "seccion": "## Momentos vividos",
+     "min": 5,
+     "falta": "Faltan momentos vividos en docs/territorio.md"
+    }
+   ],
+   "aprobado": "Territorio con verdades y momentos. Ya tienes de qué hablar."
+  },
+  {
+   "lote": "4·3",
+   "sala": 4,
+   "titulo": "Otros formatos (y si tienes un negocio)",
+   "entregable": "entender dónde va el negocio (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Si tienes un negocio, ¿tu negocio es el tema del chiste o el escenario?",
+     "respuestas": [
+      "escenario",
+      "el escenario",
+      "personaje",
+      "un personaje"
+     ],
+     "falta": "No. Si el negocio es el tema, parece un anuncio."
+    }
+   ],
+   "aprobado": "El escenario. El chiste va de la gente."
+  },
+  {
+   "lote": "4·4",
+   "sala": 4,
+   "titulo": "Tu escenario y tu personaje",
+   "entregable": "personajes/<id>/personaje.json y su fotograma",
+   "comprobaciones": [
+    {
+     "tipo": "json",
+     "ruta": "personajes/*/personaje.json",
+     "campos_no_vacios": [
+      "id",
+      "role",
+      "display_name"
+     ],
+     "falta": "No hay ningún personajes/<id>/personaje.json completo: haz /personaje."
+    },
+    {
+     "tipo": "archivo",
+     "ruta": "personajes/*/fotograma.png",
+     "min_bytes": 5000,
+     "falta": "Falta el fotograma de tu personaje (personajes/<id>/fotograma.png): /personaje lo saca con `uv run reels personaje <id>`."
+    }
+   ],
+   "aprobado": "Tu personaje existe. Y se reconoce en miniatura."
+  },
+  {
+   "lote": "4·5",
+   "sala": 4,
+   "titulo": "Dale voz",
+   "entregable": "la voz elegida en personaje.json y el casting",
+   "comprobaciones": [
+    {
+     "tipo": "json",
+     "ruta": "personajes/*/personaje.json",
+     "campos_no_vacios": [
+      "voice.voice_id"
+     ],
+     "falta": "Ningún personaje tiene voz (voice.voice_id en personajes/<id>/personaje.json): haz el casting con /personaje."
+    },
+    {
+     "tipo": "archivo",
+     "ruta": "personajes/*/casting.md",
+     "falta": "Falta el casting (personajes/<id>/casting.md con las 6 frases de prueba): /personaje lo prepara."
+    }
+   ],
+   "aprobado": "Voz elegida de oído. Tu oído es el juez, no un modelo."
+  },
+  {
+   "lote": "4·6",
+   "sala": 4,
+   "titulo": "La biblia de tu serie",
+   "entregable": "docs/biblia.md completo, con su NUNCA",
+   "comprobaciones": [
+    {
+     "tipo": "sin_huecos",
+     "ruta": "docs/biblia.md",
+     "falta": "docs/biblia.md tiene huecos: rellénalo con /personaje o pídeselo a Claude."
+    },
+    {
+     "tipo": "regex",
+     "ruta": "docs/biblia.md",
+     "patron": "^\\s*-\\s*\\*\\*NUNCA",
+     "min": 2,
+     "falta": "Cada uno de tus dos personajes necesita su NUNCA en docs/biblia.md."
+    }
+   ],
+   "aprobado": "Biblia de una página. Y con lo que nunca hacen: eso es lo que más se nota."
+  },
+  {
+   "lote": "5·1",
+   "sala": 5,
+   "titulo": "Cinco ideadores, cinco lentes",
+   "entregable": "ideas/mis-ideas.md (15 ideas, las 5 lentes)",
+   "comprobaciones": [
+    {
+     "tipo": "titulos",
+     "ruta": "ideas/mis-ideas.md",
+     "nivel": "###",
+     "min": 15,
+     "falta": "Faltan ideas en ideas/mis-ideas.md: tres por lente, cada una con su título «### …».",
+     "falta_archivo": "No existe ideas/mis-ideas.md: pídele a Claude tres ideas por lente con la ficha y que las guarde ahí."
+    },
+    {
+     "tipo": "contiene",
+     "ruta": "ideas/mis-ideas.md",
+     "textos": [
+      "vida",
+      "verdades",
+      "formatos",
+      "éxito|exito",
+      "salvaje"
+     ],
+     "falta": "En ideas/mis-ideas.md tienen que salir las cinco lentes"
+    }
+   ],
+   "aprobado": "Quince ideas. Ahora viene lo divertido: matarlas."
+  },
+  {
+   "lote": "5·2",
+   "sala": 5,
+   "titulo": "El jurado: sin piedad",
+   "entregable": "ideas/jurado-mio.md (15 ideas puntuadas, ≥ la mitad muertas con motivo, la nota del jurado al lado)",
+   "comprobaciones": [
+    {
+     "tipo": "tabla",
+     "ruta": "ideas/jurado-mio.md",
+     "columnas": [
+      "idea",
+      "mis puntos",
+      "jurado",
+      "estado",
+      "motivo"
+     ],
+     "min_filas": 15,
+     "columna_estado": "estado",
+     "valor_muerta": "muerta",
+     "columna_motivo": "motivo",
+     "columna_jurado": "jurado",
+     "min_fraccion_muertas": 0.5,
+     "falta": "Faltan ideas en la tabla de ideas/jurado-mio.md",
+     "falta_archivo": "No existe ideas/jurado-mio.md: dile a Claude «guarda mis notas y las del jurado en ideas/jurado-mio.md», con una tabla idea | mis puntos | jurado | estado | motivo."
+    }
+   ],
+   "aprobado": "Sin piedad y con motivo. Así no vuelven."
+  },
+  {
+   "lote": "5·3",
+   "sala": 5,
+   "titulo": "Tu público falso",
+   "entregable": "docs/publico.md con tus 5 espectadores",
+   "comprobaciones": [
+    {
+     "tipo": "sin_huecos",
+     "ruta": "docs/publico.md",
+     "falta": "docs/publico.md tiene huecos: haz /nicho (paso 4) para describir a tu público."
+    },
+    {
+     "tipo": "titulos",
+     "ruta": "docs/publico.md",
+     "seccion": "## Tus 5 espectadores",
+     "nivel": "###",
+     "min": 5,
+     "falta": "Faltan espectadores en docs/publico.md"
+    },
+    {
+     "tipo": "no_contiene",
+     "ruta": "docs/publico.md",
+     "textos": [
+      "son provisionales"
+     ],
+     "falta": "Tus espectadores siguen siendo los provisionales: /nicho los reescribe para tu público."
+    }
+   ],
+   "aprobado": "Cinco espectadores de tu público. Cinco gorros, una sola IA: úsalos por lo concreto."
+  },
+  {
+   "lote": "5·4",
+   "sala": 5,
+   "titulo": "Elegir",
+   "entregable": "una idea elegida en ideas/banco.jsonl (y las muertas con motivo)",
+   "comprobaciones": [
+    {
+     "tipo": "jsonl",
+     "ruta": "ideas/banco.jsonl",
+     "donde": {
+      "estado": [
+       "elegida",
+       "hecha"
+      ]
+     },
+     "min": 1,
+     "falta": "No hay ninguna idea elegida en ideas/banco.jsonl: haz /ideas y elige una."
+    },
+    {
+     "tipo": "jsonl",
+     "ruta": "ideas/banco.jsonl",
+     "donde": {
+      "estado": "descartada"
+     },
+     "campos_no_vacios": [
+      "motivo"
+     ],
+     "min": 1,
+     "falta": "En ideas/banco.jsonl no hay muertas con motivo: /ideas las guarda todas."
+    }
+   ],
+   "aprobado": "Elegida. Quien manda ha hablado."
+  },
+  {
+   "lote": "6·1",
+   "sala": 6,
+   "titulo": "El fotograma 0",
+   "entregable": "curso/ejercicios/fotograma0.md (tres versiones y tu elección)",
+   "comprobaciones": [
+    {
+     "tipo": "contiene",
+     "ruta": "curso/ejercicios/fotograma0.md",
+     "textos": [
+      "frase",
+      "cara",
+      "pantalla",
+      "elijo|elegida|me quedo"
+     ],
+     "falta": "En curso/ejercicios/fotograma0.md van tus tres versiones del fotograma 0 (frase hablada, cara y pantalla) y cuál eliges",
+     "falta_archivo": "No existe curso/ejercicios/fotograma0.md: escribe tus tres versiones del fotograma 0 y pídele a Claude que las guarde ahí."
+    }
+   ],
+   "aprobado": "Lo que engancha se lee en el fotograma 0. Sin ir escalando."
+  },
+  {
+   "lote": "6·2",
+   "sala": 6,
+   "titulo": "Lo que se comparte",
+   "entregable": "curso/ejercicios/escalera.md (5 frases)",
+   "comprobaciones": [
+    {
+     "tipo": "items",
+     "ruta": "curso/ejercicios/escalera.md",
+     "min": 5,
+     "falta": "Tu escalera necesita 5 frases, de la más suave a la que más duele, una por línea con guion",
+     "falta_archivo": "No existe curso/ejercicios/escalera.md: escribe tu escalera de 5 frases y pídele a Claude que la guarde ahí."
+    }
+   ],
+   "aprobado": "Una escalera que sube. La última, la que se manda."
+  },
+  {
+   "lote": "6·3",
+   "sala": 6,
+   "titulo": "Que suene a gente",
+   "entregable": "curso/ejercicios/de-taza-a-gente.md (5 frases reescritas)",
+   "comprobaciones": [
+    {
+     "tipo": "regex",
+     "ruta": "curso/ejercicios/de-taza-a-gente.md",
+     "patron": "(→|->)",
+     "min": 5,
+     "falta": "Reescribe 5 frases de taza como habla la gente, una por línea con el formato «frase de taza → frase de gente», en curso/ejercicios/de-taza-a-gente.md."
+    }
+   ],
+   "aprobado": "Si podría ir en una taza, era de guionista. Ya no."
+  },
+  {
+   "lote": "6·4",
+   "sala": 6,
+   "titulo": "Los revisores",
+   "entregable": "episodes/<slug>/critica.md de tu episodio",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "episodes/*/critica.md",
+     "solo_tuyos": true,
+     "falta": "Tu episodio aún no ha pasado por los revisores (falta episodes/<slug>/critica.md): sigue con /episodio."
+    }
+   ],
+   "aprobado": "Lint, editor, oído, cuidado. Revisado antes de gastar."
+  },
+  {
+   "lote": "6·5",
+   "sala": 6,
+   "titulo": "Javi se aburre en el segundo 2",
+   "entregable": "guion aprobado (Puerta 1 en estado.md)",
+   "comprobaciones": [
+    {
+     "tipo": "regex",
+     "ruta": "episodes/*/estado.md",
+     "solo_tuyos": true,
+     "patron": "^- \\[x\\] Puerta 1 ·",
+     "min": 1,
+     "falta": "La Puerta 1 de tu episodio no está aprobada en episodes/<slug>/estado.md: sigue con /episodio <slug>."
+    }
+   ],
+   "aprobado": "Guion aprobado. Javi se queda."
+  },
+  {
+   "lote": "7·1",
+   "sala": 7,
+   "titulo": "Dirigir una voz de IA",
+   "entregable": "saber dirigir v4 (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Con la voz v4, ¿qué marca el ritmo de una frase?",
+     "respuestas": [
+      "puntuacion",
+      "la puntuacion",
+      "puntos",
+      "comas",
+      "signos",
+      "puntos y comas"
+     ],
+     "falta": "No. En v4 no hay control de velocidad: el ritmo sale de cómo está escrita la frase."
+    }
+   ],
+   "aprobado": "La puntuación es el ritmo. Comas de corrido, puntos para respirar."
+  },
+  {
+   "lote": "7·2",
+   "sala": 7,
+   "titulo": "Tres tomas donde importa",
+   "entregable": "voz aprobada (Puerta 2 en estado.md)",
+   "comprobaciones": [
+    {
+     "tipo": "regex",
+     "ruta": "episodes/*/estado.md",
+     "solo_tuyos": true,
+     "patron": "^- \\[x\\] Puerta 2 ·",
+     "min": 1,
+     "falta": "La Puerta 2 de tu episodio no está aprobada en episodes/<slug>/estado.md: sigue con /episodio <slug>."
+    }
+   ],
+   "aprobado": "Voz aprobada, elegida de oído."
+  },
+  {
+   "lote": "7·3",
+   "sala": 7,
+   "titulo": "Música y efectos",
+   "entregable": "saber qué música se puede usar (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Se publica una pista de música si no has verificado su licencia?",
+     "respuestas": [
+      "no",
+      "nunca",
+      "jamas"
+     ],
+     "falta": "Repasa el 7·3: sin licencia verificada no se publica."
+    }
+   ],
+   "aprobado": "Nunca. Licencia verificada o silencio."
+  },
+  {
+   "lote": "8·1",
+   "sala": 8,
+   "titulo": "Aquí nadie anima a mano",
+   "entregable": "saber qué se cambia (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Para cambiar un plano de tu reel, ¿qué archivo se cambia?",
+     "respuestas": [
+      "script.json",
+      "script",
+      "el guion",
+      "guion",
+      "json"
+     ],
+     "falta": "No. Hay un archivo que es el contrato del vídeo."
+    }
+   ],
+   "aprobado": "script.json. Cambiar un plano es cambiar una línea."
+  },
+  {
+   "lote": "8·2",
+   "sala": 8,
+   "titulo": "La animática y el Ojo",
+   "entregable": "animática aprobada (Puerta 3 en estado.md)",
+   "comprobaciones": [
+    {
+     "tipo": "regex",
+     "ruta": "episodes/*/estado.md",
+     "solo_tuyos": true,
+     "patron": "^- \\[x\\] Puerta 3 ·",
+     "min": 1,
+     "falta": "La Puerta 3 de tu episodio no está aprobada en episodes/<slug>/estado.md: sigue con /episodio <slug>."
+    }
+   ],
+   "aprobado": "Animática aprobada. El Ojo ha mirado cada fotograma antes de pagar."
+  },
+  {
+   "lote": "8·3",
+   "sala": 8,
+   "titulo": "Cada corrección, una regla",
+   "entregable": "tu primera corrección en docs/decisiones.md",
+   "comprobaciones": [
+    {
+     "tipo": "regex",
+     "ruta": "docs/decisiones.md",
+     "patron": "^- \\d{4}-\\d{2}-\\d{2} ·",
+     "min": 1,
+     "falta": "docs/decisiones.md aún no tiene ninguna corrección tuya (formato «- AAAA-MM-DD · episodio · qué cambió · por qué»): /episodio las apunta en cada puerta."
+    }
+   ],
+   "aprobado": "Corrección apuntada. La fábrica no repite el fallo."
+  },
+  {
+   "lote": "8·4",
+   "sala": 8,
+   "titulo": "Pide una pieza nueva",
+   "entregable": "saber qué se aprueba (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Antes de usar una pieza nueva en un episodio, ¿qué te enseña la fábrica para que des el OK?",
+     "respuestas": [
+      "fotograma",
+      "un fotograma",
+      "imagen",
+      "una imagen",
+      "captura",
+      "foto"
+     ],
+     "falta": "No. Antes de usarla, la tienes que ver."
+    }
+   ],
+   "aprobado": "Un fotograma. Nada visual cambia sin tu OK."
+  },
+  {
+   "lote": "9·1",
+   "sala": 9,
+   "titulo": "Tu horno: local o alquilado",
+   "entregable": "una preview de tu episodio",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "episodes/*/preview_*.mp4",
+     "solo_tuyos": true,
+     "min_bytes": 50000,
+     "falta": "Aún no hay ninguna preview de tu episodio: capa 4 de /episodio (los 3 primeros segundos, el pico y el final)."
+    }
+   ],
+   "aprobado": "Preview hecha. Lo delicado, visto en movimiento."
+  },
+  {
+   "lote": "9·2",
+   "sala": 9,
+   "titulo": "Alquilar un superordenador",
+   "entregable": "saber lo de Stop (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "En Vast, si pulsas «Stop», ¿deja de cobrar?",
+     "respuestas": [
+      "no",
+      "no deja",
+      "sigue cobrando",
+      "no para"
+     ],
+     "falta": "Cuidado: repasa el 9·2. Esto cuesta dinero."
+    }
+   ],
+   "aprobado": "No. Stop sigue cobrando. Por eso la fábrica destruye la máquina siempre."
+  },
+  {
+   "lote": "9·3",
+   "sala": 9,
+   "titulo": "El turno de noche",
+   "entregable": "publicar/<slug>/PARTE.md",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "publicar/*/PARTE.md",
+     "solo_tuyos": true,
+     "falta": "No hay ningún parte de la mañana (publicar/<slug>/PARTE.md): antes de dormir, /turno-de-noche <slug>."
+    }
+   ],
+   "aprobado": "Has dormido y la fábrica ha trabajado. Así sí."
+  },
+  {
+   "lote": "9·4",
+   "sala": 9,
+   "titulo": "Montaje y comprobación",
+   "entregable": "TU REEL en publicar/<slug>/ con su texto",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "publicar/*/*.mp4",
+     "solo_tuyos": true,
+     "min_bytes": 300000,
+     "falta": "Aún no hay ningún reel tuyo en publicar/<slug>/: termina /episodio (o /turno-de-noche)."
+    },
+    {
+     "tipo": "archivo",
+     "ruta": "publicar/*/*.txt",
+     "solo_tuyos": true,
+     "falta": "Falta el texto del post (publicar/<slug>/<slug>.txt): capa 5 de /episodio."
+    }
+   ],
+   "aprobado": "Tu reel. Hecho en tu fábrica. Ya está."
+  },
+  {
+   "lote": "10·1",
+   "sala": 10,
+   "titulo": "Del ordenador al teléfono",
+   "entregable": "saber cómo pasarlo (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Por qué no se pasa el vídeo al teléfono por WhatsApp?",
+     "respuestas": [
+      "comprime",
+      "lo comprime",
+      "calidad",
+      "pierde calidad",
+      "baja la calidad",
+      "peor"
+     ],
+     "falta": "No. Piensa en qué le hace WhatsApp a tus vídeos."
+    }
+   ],
+   "aprobado": "Lo comprime. Tu vídeo llega como lo hiciste o no llega."
+  },
+  {
+   "lote": "10·2",
+   "sala": 10,
+   "titulo": "Publicar bien",
+   "entregable": "tu predicción en metrics/predicciones.jsonl",
+   "comprobaciones": [
+    {
+     "tipo": "jsonl",
+     "ruta": "metrics/predicciones.jsonl",
+     "campos_no_vacios": [
+      "salta_3s",
+      "compart_pct"
+     ],
+     "min": 1,
+     "falta": "Antes de publicar, apuesta: qué % se irá antes de 3 s y qué % compartirá (capa 5 de /episodio lo guarda en metrics/predicciones.jsonl)."
+    }
+   ],
+   "aprobado": "Predicción guardada. En 48 h sabrás cuánto te has equivocado."
+  },
+  {
+   "lote": "10·3",
+   "sala": 10,
+   "titulo": "Lo que no hay que hacer",
+   "entregable": "saber el ritmo (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "¿Cuántos reels publicas al día, como mucho?",
+     "respuestas": [
+      "1",
+      "uno",
+      "un reel",
+      "uno al dia",
+      "1 al dia"
+     ],
+     "falta": "No. Cuando salen varios el mismo día, se pisan."
+    }
+   ],
+   "aprobado": "Uno. A la misma hora. Siempre."
+  },
+  {
+   "lote": "11·1",
+   "sala": 11,
+   "titulo": "Tus números",
+   "entregable": "las métricas de un reel en metrics/",
+   "comprobaciones": [
+    {
+     "tipo": "jsonl",
+     "rutas": [
+      "metrics/instagram.jsonl",
+      "metrics/tiktok.jsonl",
+      "metrics/youtube.jsonl"
+     ],
+     "min": 1,
+     "falta": "Aún no hay números de ningún reel: haz /numeros (a las 48 h de publicar)."
+    }
+   ],
+   "aprobado": "Números guardados. Ahora hablan los de verdad."
+  },
+  {
+   "lote": "11·2",
+   "sala": 11,
+   "titulo": "Un reel no demuestra nada",
+   "entregable": "tu primera hipótesis en docs/hipotesis.md",
+   "comprobaciones": [
+    {
+     "tipo": "regex",
+     "ruta": "docs/hipotesis.md",
+     "patron": "^### H\\d+",
+     "min": 1,
+     "falta": "Escribe una hipótesis medible en docs/hipotesis.md (formato «### H1 — …» con qué predice, cómo se mide y estado)."
+    }
+   ],
+   "aprobado": "Una hipótesis. Ni quien manda se libra de los datos."
+  },
+  {
+   "lote": "11·3",
+   "sala": 11,
+   "titulo": "La revisión semanal",
+   "entregable": "un informe en reviews/",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "reviews/*.md",
+     "excluir": [
+      "reviews/README.md"
+     ],
+     "falta": "Aún no hay ninguna revisión en reviews/: haz /revision (con tus números ya metidos)."
+    }
+   ],
+   "aprobado": "Primera revisión. Cada semana, la memoria más corta o igual."
+  },
+  {
+   "lote": "11·4",
+   "sala": 11,
+   "titulo": "Cuando un reel fracasa",
+   "entregable": "saber qué mirar (pregunta)",
+   "comprobaciones": [
+    {
+     "tipo": "pregunta",
+     "pregunta": "Un reel ha ido mal. ¿Qué miras primero?",
+     "respuestas": [
+      "arranque",
+      "el arranque",
+      "salto",
+      "3 s",
+      "3 segundos",
+      "tres segundos",
+      "fotograma 0",
+      "segundo 0",
+      "primer segundo",
+      "gancho",
+      "los primeros segundos",
+      "primeros segundos"
+     ],
+     "falta": "Casi. Empieza por el principio del vídeo."
+    }
+   ],
+   "aprobado": "El arranque. Un fracaso es un dato, no un juicio."
+  },
+  {
+   "lote": "12·1",
+   "sala": 12,
+   "titulo": "Tu primera semana",
+   "entregable": "curso/plan-7-dias.md",
+   "comprobaciones": [
+    {
+     "tipo": "items",
+     "ruta": "curso/plan-7-dias.md",
+     "min": 7,
+     "falta": "Tu plan necesita un paso por día, siete líneas con guion",
+     "falta_archivo": "No existe curso/plan-7-dias.md: escribe tu plan de 7 días (una línea por día) y pídele a Claude que lo guarde ahí."
+    }
+   ],
+   "aprobado": "Siete días. Uno al día, a la misma hora."
+  },
+  {
+   "lote": "12·2",
+   "sala": 12,
+   "titulo": "Ya está",
+   "entregable": "los sellos de lo importante",
+   "comprobaciones": [
+    {
+     "tipo": "lotes",
+     "lotes": [
+      "1·5",
+      "4·2",
+      "5·4",
+      "6·5",
+      "9·4"
+     ],
+     "falta": "Te faltan sellos de lo importante"
+    }
+   ],
+   "aprobado": "Ya está. Tu fábrica, tu reel, tu silla."
+  }
+ ]
+}

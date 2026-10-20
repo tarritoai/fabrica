@@ -1,0 +1,60 @@
+{
+  "id": "chica",
+  "display_name": "La chica de la luz",
+  "height": 1.62,
+  "head_offset": [
+    0,
+    0,
+    1.45
+  ],
+  "subtitle_color": "#f2e2c8",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "qBvury71WUJfVeT1STkG",
+    "name": "Samanta - Warm, Tender, Expressive",
+    "settings": {
+      "stability": 0.55,
+      "similarity_boost": 0.75,
+      "style": 0.3
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "look_phone",
+    "slump"
+  ],
+  "placeholder": {
+    "shape": "human",
+    "color": "#6cc3a6",
+    "head_color": "#efc3a0",
+    "hair_color": "#7b3a1e"
+  },
+  "human": {
+    "skin": "#efc3a0",
+    "skin_dark": "#d9a483",
+    "hoodie": "#6cc3a6",
+    "hoodie_dark": "#4fa088",
+    "jeans": "#2f3a4a",
+    "hair": "#7b3a1e",
+    "hair_style": "bun",
+    "stubble": false,
+    "lashes": true,
+    "thin_brows": true,
+    "blush": "#f09a90",
+    "pose": "sofa"
+  },
+  "role": "human",
+  "note": "Miniseries part 2: the person behind the lonely light, in her dark room at 3 a.m. Same voice as voz_sola (she is the light).",
+  "voice_note": "Voz más joven desde 2026-10-16 (antes: Regina, eBthAb30UYbt2nojGXeA)."
+}

@@ -1,0 +1,72 @@
+{
+  "id": "estudiante",
+  "display_name": "Paula",
+  "role": "humano",
+  "description": "Estudia de noche (oposiciones, exámenes). Gafas redondas, media melena con flequillo, sudadera ciruela.",
+  "height": 1.65,
+  "head_offset": [
+    0,
+    0,
+    1.45
+  ],
+  "subtitle_color": "#ffffff",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": "a7NxsR5B1mpwgpVa10g3",
+    "name": "Anita - Conversational",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.3
+    }
+  },
+  "emotions": [
+    "neutral",
+    "orgulloso",
+    "confuso",
+    "alarma",
+    "juzgando",
+    "hundido",
+    "panico",
+    "aliviado"
+  ],
+  "actions": [
+    "idle",
+    "talk_gesture",
+    "shrug",
+    "facepalm",
+    "lean_in",
+    "slump",
+    "stretch",
+    "look_phone",
+    "recoil"
+  ],
+  "placeholder": {
+    "shape": "human"
+  },
+  "human": {
+    "skin": "#c98f6b",
+    "skin_dark": "#b27a58",
+    "hoodie": "#5e2a46",
+    "hoodie_dark": "#481f36",
+    "jeans": "#2a3142",
+    "hair": "#24160f",
+    "hair_style": "bob",
+    "stubble": false,
+    "lashes": true,
+    "blush": "#e08a7e",
+    "glasses": "#1f1b1a",
+    "eye_scale": 0.8
+  },
+  "emotion_overrides": {
+    "alarma": {
+      "eye_z": 1.05,
+      "eye_s": 1.0
+    },
+    "panico": {
+      "eye_z": 1.1,
+      "eye_s": 1.05
+    }
+  },
+  "voice_note": "Elegida en el casting del 2026-10-20: neutra, natural y con humor. Su susurro no baja solo: cuando haga falta, pídelo en el guion con la etiqueta whispers (delivery.tags)."
+}
