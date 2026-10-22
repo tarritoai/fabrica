@@ -349,7 +349,8 @@
    "comprobaciones": [
     {
      "tipo": "json",
-     "ruta": "personajes/*/personaje.json", "sin_personajes_ejemplo": true,
+     "ruta": "personajes/*/personaje.json",
+     "sin_personajes_ejemplo": true,
      "campos_no_vacios": [
       "id",
       "role",
@@ -359,7 +360,8 @@
     },
     {
      "tipo": "archivo",
-     "ruta": "personajes/*/fotograma.png", "sin_personajes_ejemplo": true,
+     "ruta": "personajes/*/fotograma.png",
+     "sin_personajes_ejemplo": true,
      "min_bytes": 5000,
      "falta": "Falta el fotograma de tu personaje (personajes/<id>/fotograma.png): /personaje lo saca con `uv run reels personaje <id>`."
     }
@@ -374,7 +376,8 @@
    "comprobaciones": [
     {
      "tipo": "json",
-     "ruta": "personajes/*/personaje.json", "sin_personajes_ejemplo": true,
+     "ruta": "personajes/*/personaje.json",
+     "sin_personajes_ejemplo": true,
      "campos_no_vacios": [
       "voice.voice_id"
      ],
@@ -382,7 +385,8 @@
     },
     {
      "tipo": "archivo",
-     "ruta": "personajes/*/casting.md", "sin_personajes_ejemplo": true,
+     "ruta": "personajes/*/casting.md",
+     "sin_personajes_ejemplo": true,
      "falta": "Falta el casting (personajes/<id>/casting.md con las 6 frases de prueba): /personaje lo prepara."
     }
    ],
@@ -767,7 +771,7 @@
   {
    "lote": "9·2",
    "sala": 9,
-   "titulo": "Alquilar un superordenador",
+   "titulo": "Alquilar una supercomputadora",
    "entregable": "saber lo de Stop (pregunta)",
    "comprobaciones": [
     {
@@ -779,7 +783,14 @@
       "sigue cobrando",
       "no para"
      ],
-     "falta": "Cuidado: repasa el 9·2. Esto cuesta dinero."
+     "falta": "Cuidado: repasa el 9·2. Esto cuesta dinero.",
+     "rechazar": [
+      "si deja",
+      "si para",
+      "si se para",
+      "si que deja",
+      "si que para"
+     ]
     }
    ],
    "aprobado": "No. Stop sigue cobrando. Por eso la fábrica destruye la máquina siempre."
@@ -803,7 +814,7 @@
    "lote": "9·4",
    "sala": 9,
    "titulo": "Montaje y comprobación",
-   "entregable": "TU REEL en publicar/<slug>/ con su texto",
+   "entregable": "TU REEL en publicar/<slug>/ con su texto y tu OK final (Puerta 5)",
    "comprobaciones": [
     {
      "tipo": "archivo",
@@ -817,6 +828,14 @@
      "ruta": "publicar/*/*.txt",
      "solo_tuyos": true,
      "falta": "Falta el texto del post (publicar/<slug>/<slug>.txt): capa 5 de /episodio."
+    },
+    {
+     "tipo": "regex",
+     "ruta": "episodes/*/estado.md",
+     "solo_tuyos": true,
+     "patron": "^- \\[x\\] Puerta 5 ·",
+     "min": 1,
+     "falta": "Falta tu OK final: la Puerta 5 de episodes/<slug>/estado.md (ver el vídeo entero con sonido, el texto, la portada y tu apuesta). Sigue con /episodio <slug>."
     }
    ],
    "aprobado": "Tu reel. Hecho en tu fábrica. Ya está."
@@ -824,7 +843,7 @@
   {
    "lote": "10·1",
    "sala": 10,
-   "titulo": "Del ordenador al teléfono",
+   "titulo": "De tu computadora al teléfono",
    "entregable": "saber cómo pasarlo (pregunta)",
    "comprobaciones": [
     {
@@ -876,9 +895,24 @@
       "uno",
       "un reel",
       "uno al dia",
-      "1 al dia"
+      "1 al dia",
+      "una",
+      "una vez",
+      "una al dia",
+      "uno solo",
+      "solo uno",
+      "una vez al dia"
      ],
-     "falta": "No. Cuando salen varios el mismo día, se pisan."
+     "falta": "No. Cuando salen varios el mismo día, se pisan.",
+     "rechazar": [
+      "dos",
+      "2",
+      "tres",
+      "3",
+      "varios",
+      "varias",
+      "mas de"
+     ]
     }
    ],
    "aprobado": "Uno. A la misma hora. Siempre."
@@ -956,7 +990,9 @@
       "primer segundo",
       "gancho",
       "los primeros segundos",
-      "primeros segundos"
+      "primeros segundos",
+      "fotograma cero",
+      "segundo cero"
      ],
      "falta": "Casi. Empieza por el principio del vídeo."
     }
@@ -997,7 +1033,7 @@
      "falta": "Te faltan sellos de lo importante"
     }
    ],
-   "aprobado": "Ya está. Tu fábrica, tu reel, tu silla."
+   "aprobado": "Ya está. Puedes apagar la linterna."
   }
  ]
 }

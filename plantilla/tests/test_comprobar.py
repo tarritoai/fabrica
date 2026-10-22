@@ -9,6 +9,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = Path(".claude") / "skills" / "tarrito" / "comprobar.py"
 CHECKS = Path("curso") / "comprobaciones.json"
@@ -132,3 +134,51 @@ def test_answers_ignore_end_dots_but_keep_inner_ones():
     assert norm("script.json.") == "script.json"
     assert norm("reels/x.mp4") == "reels/x.mp4"
     assert norm("Sí, ¡TÚ!") == "si tu"
+
+
+def _answer(lot: str, text: str) -> bool:
+    mod = _module()
+    cfg = json.loads((ROOT / CHECKS).read_text(encoding="utf-8"))
+    spec = next(x for x in cfg["lotes"] if x["lote"] == lot)["comprobaciones"][0]
+    return mod.c_pregunta(spec, cfg, text) is None
+
+
+@pytest.mark.parametrize("lot,text,ok", [
+    ("9·2", "No.", True), ("9·2", "no, sigue cobrando", True), ("9·2", "No, no sé… no deja de cobrar", True),
+    ("9·2", "No sé.", False), ("9·2", "no lo sé", False), ("9·2", "ni idea", False), ("9·2", "Sí, deja de cobrar", False),
+    ("10·3", "Una.", True), ("10·3", "una vez", True), ("10·3", "Uno.", True), ("10·3", "1", True),
+    ("10·3", "uno o dos", False), ("10·3", "más de uno", False), ("10·3", "2", False),
+    ("11·4", "El fotograma cero.", True), ("11·4", "segundo cero", True), ("11·4", "fotograma 0", True),
+    ("11·4", "la música", False),
+])
+def test_question_answers(lot, text, ok):
+    assert _answer(lot, text) is ok
+
+
+def test_9_4_needs_the_final_gate(tmp_path):
+    p = _project(tmp_path)
+    (p / "publicar" / "mi-reel").mkdir(parents=True)
+    (p / "publicar" / "mi-reel" / "mi-reel.mp4").write_bytes(b"\0" * 400_000)
+    (p / "publicar" / "mi-reel" / "mi-reel.txt").write_text("Texto. Envíaselo a quien…\n", encoding="utf-8")
+    (p / "episodes" / "mi-reel").mkdir(parents=True)
+    estado = p / "episodes" / "mi-reel" / "estado.md"
+    estado.write_text("- [x] Puerta 4 · preview · aprobada 2026-10-20\n- [ ] Puerta 5 · final (OK a publicar)\n",
+                      encoding="utf-8")
+    r = _run(p, "9.4")
+    assert r.returncode == 1 and "Puerta 5" in r.stdout
+    estado.write_text("- [x] Puerta 5 · final · aprobada 2026-10-21 · apuesta 30 % / 2 %\n", encoding="utf-8")
+    r = _run(p, "9.4")
+    assert r.returncode == 0 and "APROBADO · 9·4" in r.stdout
+
+
+def test_lot_titles_say_computadora():
+    text = (ROOT / CHECKS).read_text(encoding="utf-8").lower()
+    assert "ordenador" not in text
+    cfg = json.loads((ROOT / CHECKS).read_text(encoding="utf-8"))
+    titles = {x["lote"]: x["titulo"] for x in cfg["lotes"]}
+    assert titles["9·2"] == "Alquilar una supercomputadora" and titles["10·1"] == "De tu computadora al teléfono"
+
+
+def test_numeros_is_pre_approved():
+    allow = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))["permissions"]["allow"]
+    assert "Bash(uv run python .claude/skills/numeros/numeros.py:*)" in allow

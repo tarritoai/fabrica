@@ -113,7 +113,9 @@ la puerta 1 con en cuántos reels más se reutilizaría, y nunca lo empieces sin
 ## Capa 5 — Final + gancho B
 1. **Dónde renderizar**: en local es gratis pero lento; propón **`/turno-de-noche <slug>`** (lo deja todo hecho
    mientras duerme). Si `uv run reels doctor --prueba-render` dijo que en local tarda demasiado, propón `--cloud`
-   (GPU alquilada, céntimos; la máquina se destruye siempre al acabar) y **pide el OK con el precio** antes.
+   (GPU alquilada, céntimos; la máquina se destruye al acabar y, si la computadora se apaga a mitad, se destruye sola
+   a los 20 min) y **pide el OK con el precio** antes. Antes del turno, deja listo el **gancho B** (paso 6, sin
+   render) para que el turno lo cueza también.
 2. Si lo haces ahora: `uv run reels render <slug>` → `uv run reels compose <slug>` → `uv run reels check <slug>`.
 3. Hojas del final: `uv run reels sheet <slug> --start 0 --end 3 --fps 8` y del último tramo; `ojo` en modo
    movimiento: subtítulos, que nada tape la cara, que lo que engancha esté en el primer segundo, que el final enlace.
@@ -121,13 +123,24 @@ la puerta 1 con en cuántos reels más se reutilizaría, y nunca lo empieces sin
 5. `publicar/<slug>/<slug>.txt`: frase que abre la historia + petición sobre el espectador ("Envíaselo a…") + 3–5
    hashtags + crédito de música + recordatorio de la etiqueta de IA (sigue `post_checklist` de
    `assets/brand/brand.json`). Copia el vídeo a `publicar/<slug>/<slug>.mp4`. `uv run reels lint <slug>` final.
-6. **Gancho B (obligatorio)**: `episodes/<slug>-b/script.json` = copia con solo los 1–2 primeros beats cambiados.
-   Sus voces nuevas cuestan poco, pero cuestan: estimación y OK como en la capa 2. Render y montaje como el A
-   (también lo hace `/turno-de-noche` si existe la carpeta `-b`). `publicar/<slug>/<slug>-b.mp4` y su `.txt`, que
-   **empieza con otra frase** (las métricas se emparejan por la primera línea del texto).
+6. **Gancho B (obligatorio)**: `episodes/<slug>-b/script.json` = copia del A con solo los 1–2 primeros beats
+   cambiados y **`"slug": "<slug>-b"`** dentro (si no, `reels lint` da error: voces y escena irían a la carpeta del
+   A). `uv run reels lint <slug>-b`. Sus voces nuevas cuestan poco, pero cuestan: estimación
+   (`estimar_voz.py <slug>-b`) y OK como en la capa 2; lo que no cambia respecto al A suele salir de la caché sin cobrar. Escribe
+   `publicar/<slug>/<slug>-b.txt`, que **empieza con otra frase** (las métricas se emparejan por la primera línea).
+   - **«Prepara el gancho B para esta noche.»** = todo lo de este paso **sin** `build` ni `render`: guion B, lint,
+     voces (con su OK) y texto. Termina diciendo que el B está listo y que el turno lo cocerá; no lances nada más.
+   - **El B se cuece entero**, no solo los planos cambiados: es un episodio aparte (su audio dura distinto, así que
+     todo lo que viene después se mueve). Render y montaje como el A; `/turno-de-noche <slug>` lo hace solo si existe
+     `episodes/<slug>-b/` con voces. En local tarda lo mismo que el A; en la nube cuesta lo mismo que el A.
+   - Resultado: `publicar/<slug>/<slug>-b.mp4` junto al A.
 7. **Predicción** (antes de publicar, para `/calibrar`): una línea en `metrics/predicciones.jsonl`:
-   `{"slug", "fecha", "espectadores": {"<nombre>": <su línea JSON de la última versión>}, "editor": "<veredicto>", "jurado": <puntos del banco>, "salta_3s": <apuesta %>, "compart_pct": <apuesta %>}`.
+   `{"slug", "fecha", "espectadores": {"<nombre>": <su línea JSON de la última versión>}, "editor": "<veredicto>", "jurado": <puntos del banco>, "salta_3s": <apuesta %>, "compart_pct": <apuesta %>, "apuesta_de": "quien manda"}`.
    Pide a quien manda su propia apuesta de salto < 3 s y compartidos, y apúntala en `estado.md`.
+   **Si ya hay una línea de este slug, no la reescribas**: «Enséñame mi apuesta» = léela y enséñasela
+   (`salta_3s`, `compart_pct`, fecha), nada más. Solo si quien manda pide cambiarla **antes de publicar**, añade una
+   línea nueva (vale la última) y apúntalo en `estado.md`; nunca borres ni edites líneas, y nunca después de publicar
+   (la apuesta se hace a ciegas: si no, `/calibrar` no sirve).
 8. ✋ **Puerta 5 — Final**: vídeo A y B, portada y texto. Recomendación: subir A y B como **reels de prueba**
    (solo los ve gente que no sigue la cuenta) y a las ~24 h publicar para todos el que menos gente pierda en 3 s;
    uno al día como mucho, siempre en la misma franja. **La fábrica nunca publica nada**: lo sube quien manda.

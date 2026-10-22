@@ -5,7 +5,8 @@ switches, so the same set dresses many niches without code. Unknown keys are ign
 
     estudio:   {"background": "#e8dcc8", "floor": null, "plinth": "#cbb89a", "plinth_on": true, "key": "#fff0dc"}
     mostrador: {"variant": "cafeteria" | "obrador", "wall": "#e2d2b6", "counter": "#7a4e33", "top": "#ece6da",
-                "accent": "#2f6b5a", "floor": "#b79e7c", "daylight": true}
+                "accent": "#2f6b5a", "floor": "#b79e7c", "daylight": true,
+                "pizarra": "Hoy|lo de siempre", "pizarra_tiza": "#e9e4d6", "pizarra_fondo": "#26302c"}
     exterior:  {"grass": "#86b35c", "sky": "#c4e3f3", "path": "#dcc9a2", "trees": "#4f8a43", "bench": true, "stump": true}
 
 Slots follow escritorio_noche (blender/sets.py): "left" = the human (standing here), "right" (+ "right_a"/"right_b")
@@ -20,7 +21,7 @@ import random
 import bpy
 from mathutils import Vector
 
-from lib import empty, link, material, rad, srgb
+from lib import ROOT, empty, link, material, rad, srgb
 
 
 def _opts(timeline: dict | None, defaults: dict) -> dict:
@@ -143,6 +144,91 @@ COUNTER = {"variant": "cafeteria", "wall": "#e2d2b6", "counter": "#7a4e33", "top
            "floor": "#b79e7c", "daylight": True}
 
 
+# --- the chalkboard: menu lines, or the script's own words in chalk ---------------------------------------------
+
+CHALK_FONT = ROOT / "assets" / "fonts" / "PatrickHand-Regular.ttf"  # OFL, hand-written, with ñ, tildes, ¿ and ¡
+CHALK_MAX_LINES = 4
+
+
+def chalk_lines(o: dict) -> list[str]:
+    """set_options "pizarra": the text of the board. Lines split by "|" or a line break; at most 4."""
+    text = str(o.get("pizarra") or "").replace("\r", "")
+    lines = [ln.strip() for part in text.split("|") for ln in part.split("\n")]
+    return [ln for ln in lines if ln][:CHALK_MAX_LINES]
+
+
+def chalkboard(root, center: tuple[float, float, float], frame_mat, o: dict, rng: random.Random) -> None:
+    """A framed chalkboard on the wall at `center` (x, wall y, z). With set_options "pizarra", it says that text in
+    chalk letters, as big as fits; without it, menu lines with no readable text (nothing to translate)."""
+    from rigs.thing import box_bm, to_object
+
+    x, wall_y, z = center
+    w, h = 1.3, 0.8
+    b = to_object("chalkboard", box_bm((w, 0.04, h), bevel=0.01), material("set_chalkboard", o.get("pizarra_fondo") or "#26302c", 0.9))
+    b.location = (x, wall_y - 0.03, z)
+    b.parent = root
+    frame = to_object("chalk_frame", box_bm((w + 0.08, 0.035, h + 0.08), bevel=0.01), frame_mat)
+    frame.location = (x, wall_y - 0.015, z)
+    frame.parent = root
+    chalk = material("set_chalk", o.get("pizarra_tiza") or "#e9e4d6", 0.9)
+    lines = chalk_lines(o)
+    if not lines:
+        for r in range(4):  # menu lines in chalk (no readable text: nothing to translate)
+            lw = rng.uniform(0.55, 0.9)
+            ln = to_object(f"chalk_line_{r}", box_bm((lw, 0.01, 0.025)), chalk)
+            ln.location = (x - (0.9 - lw) / 2 - 0.12, wall_y - 0.06, z + 0.23 - r * 0.15)
+            ln.parent = root
+            dot = to_object(f"chalk_price_{r}", box_bm((0.12, 0.01, 0.025)), chalk)
+            dot.location = (x + 0.45, wall_y - 0.06, z + 0.23 - r * 0.15)
+            dot.parent = root
+        return
+    # The lowest strip stays clear: on the café wall, the shelf's jars stand in front of it.
+    chalk_text(lines, (x, wall_y - 0.056, z - 0.01), w - 0.16, h - 0.24, chalk, root)
+
+
+def chalk_text(lines: list[str], center: tuple[float, float, float], max_w: float, max_h: float, mat, parent) -> list:
+    """Flat letters (meshes, so the .blend needs no font file: the cloud machine has none), one object per line,
+    centred on `center` facing the camera (-Y). Every line gets the same letter size: the largest that fits."""
+    font = bpy.data.fonts.load(str(CHALK_FONT), check_existing=True) if CHALK_FONT.exists() else None
+    pitch = max_h / len(lines)  # room per line
+    size = pitch * 0.82
+    curves = []
+    for i, text in enumerate(lines):
+        cu = bpy.data.curves.new(f"chalk_font_{i}", "FONT")  # temporary: becomes the mesh chalk_text_<i>
+        cu.body = text
+        if font:
+            cu.font = font
+        cu.size = size
+        cu.align_x, cu.align_y = "CENTER", "CENTER"
+        ob = bpy.data.objects.new(f"chalk_font_{i}", cu)
+        link(ob)
+        curves.append(ob)
+    bpy.context.view_layer.update()
+    widest = max(ob.dimensions.x for ob in curves) or 1.0
+    scale = min(1.0, max_w / widest)  # long lines shrink every line alike (a board in one hand)
+    for ob in curves:
+        ob.data.size = size * scale
+    bpy.context.view_layer.update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    out = []
+    x, y, z = center
+    top = z + pitch * scale * (len(lines) - 1) / 2
+    for i, ob in enumerate(curves):
+        mesh = bpy.data.meshes.new_from_object(ob.evaluated_get(depsgraph))
+        mesh.materials.append(mat)
+        me = bpy.data.objects.new(f"chalk_text_{i}", mesh)
+        link(me)
+        me.location = (x, y, top - i * pitch * scale)
+        # Stand it on the wall facing the camera (-Y), with a slight hand-drawn tilt in its own plane.
+        me.rotation_euler = (rad(90), rad(random.Random(i).uniform(-1.2, 1.2)), 0)
+        me.parent = parent
+        out.append(me)
+        curve = ob.data
+        bpy.data.objects.remove(ob)
+        bpy.data.curves.remove(curve)
+    return out
+
+
 def mostrador(timeline: dict | None = None) -> dict:
     """A shop counter by day, seen from the customer's side: the human works behind it, the thing stands on it.
     variant "cafeteria" (espresso machine, cups, cakes, chalkboard) or "obrador" (bakery/kitchen: oven, shelves,
@@ -192,22 +278,7 @@ def mostrador(timeline: dict | None = None) -> dict:
     # Back: shelves, machines and goods (Kenney CC0 + simple shapes).
     if cafe:
         K("kitchenCoffeeMachine", (-0.95, 1.18, ch), 0, root, scale=1.6)
-        board = material("set_chalkboard", "#26302c", 0.9)
-        b = to_object("chalkboard", box_bm((1.3, 0.04, 0.8), bevel=0.01), board)
-        b.location = (0.55, back_y - 0.03, 2.25)
-        b.parent = root
-        frame = to_object("chalk_frame", box_bm((1.38, 0.035, 0.88), bevel=0.01), wood)
-        frame.location = (0.55, back_y - 0.015, 2.25)
-        frame.parent = root
-        chalk = material("set_chalk", "#e9e4d6", 0.9)
-        for r in range(4):  # menu lines in chalk (no readable text: nothing to translate)
-            w = rng.uniform(0.55, 0.9)
-            ln = to_object(f"chalk_line_{r}", box_bm((w, 0.01, 0.025)), chalk)
-            ln.location = (0.55 - (0.9 - w) / 2 - 0.12, back_y - 0.06, 2.48 - r * 0.15)
-            ln.parent = root
-            dot = to_object(f"chalk_price_{r}", box_bm((0.12, 0.01, 0.025)), chalk)
-            dot.location = (1.0, back_y - 0.06, 2.48 - r * 0.15)
-            dot.parent = root
+        chalkboard(root, (0.55, back_y, 2.25), wood, o, rng)
         cup = material("set_cup", "#f4efe6", 0.3)
         for i in range(5):  # stacked cups on the machine's shelf
             c = to_object(f"cup_{i}", lathe_bm([(0, 0), (0.035, 0), (0.045, 0.07), (0.04, 0.07), (0.03, 0.01), (0, 0.01)], 12), cup)
@@ -228,7 +299,10 @@ def mostrador(timeline: dict | None = None) -> dict:
     else:
         K("kitchenStove", (-1.3, 1.1, 0), 0, root, scale=1.9)
         K("hoodModern", (-1.3, 1.3, 1.65), 0, root, scale=1.9)
-        K("kitchenCabinetUpperDouble", (0.3, 1.3, 1.6), 0, root, scale=1.9)
+        if chalk_lines(o):  # the board takes the wall cupboard's place (where the café has it): it reads in two_shot
+            chalkboard(root, (0.55, back_y, 2.25), wood, o, rng)
+        else:
+            K("kitchenCabinetUpperDouble", (0.3, 1.3, 1.6), 0, root, scale=1.9)
         bread = material("set_bread", "#c8843f", 0.85)
         crust = material("set_bread_dark", "#9a5a28", 0.85)
         for i in range(4):  # loaves on the counter's back edge
@@ -251,9 +325,13 @@ def mostrador(timeline: dict | None = None) -> dict:
         j = to_object(f"shelf_jar_{i}", lathe_bm([(0, 0), (0.06, 0), (0.065, 0.14), (0.04, 0.17), (0, 0.17)], 10), jam[i % 3] if i % 2 else jar)
         j.location = (-1.25 + i * 0.3, back_y - 0.12, 1.87)
         j.parent = root
-    K("plantSmall2", (0.25, back_y - 0.12, 1.87), 0, root, scale=1.4)
+    if not chalk_lines(o):  # its leaves would cover the board's words
+        K("plantSmall2", (0.25, back_y - 0.12, 1.87), 0, root, scale=1.4)
     # Pendant lamps over the counter (warm, small: daylight does the work).
-    for i, x in enumerate((-0.8, 0.45, 1.6)):
+    lamps = (-0.8, 0.45, 1.6)
+    if chalk_lines(o):
+        lamps = (-0.8, 1.6)  # the middle one hangs in front of the board's words (wide shots)
+    for i, x in enumerate(lamps):
         shade = to_object(f"pendant_{i}", lathe_bm([(0.0, 0.0), (0.2, 0.0), (0.16, 0.08), (0.06, 0.2), (0.02, 0.24), (0, 0.24)], 14, flat_front=False),
                           accent)
         shade.location = (x, 0.65, 2.25)

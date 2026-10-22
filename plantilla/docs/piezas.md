@@ -23,10 +23,26 @@ del código; los alias valen igual.
 | `characters` | reparto: 1–3 en cámara + como mucho una voz fuera de cámara. El primer humano de la lista hace de **humano** y la primera cosa, de **cosa** (§8). `habitacion` necesita al humano |
 | `reparto` | opcional: fuerza quién hace cada papel, p. ej. `{"humano": "estudiante", "cosa": "lucio"}` |
 | `set` | `habitacion` (**por defecto**: el cuarto-escritorio con ventana a una ciudad de noche o de día; `set_options`: `window` `noche`/`dia`, `wall`, `floor`, `desk`, `rug`, `chair`, `curtains`, `posters`, `poster_colors`, `corcho`, `shelf`, `plants`, `sofa`, `apuntes`, `city`), `escritorio_noche` (guiones antiguos: el mismo cuarto de noche), y los genéricos: `estudio` (fondo infinito de un color y peana: explicativos, producto), `mostrador` (barra de cafetería u obrador, de día: el humano detrás, la cosa encima) y `exterior` (parque de día, la cosa en un tocón) |
-| `set_options` | solo decorados genéricos: colores y opciones. `estudio`: `background`, `floor`, `plinth`, `plinth_on`, `key`. `mostrador`: `variant` (`cafeteria` / `obrador`), `wall`, `counter`, `top`, `accent`, `floor`, `daylight`. `exterior`: `grass`, `sky`, `path`, `trees`, `bench`, `stump` |
+| `set_options` | solo decorados genéricos: colores y opciones. `estudio`: `background`, `floor`, `plinth`, `plinth_on`, `key`. `mostrador`: `variant` (`cafeteria` / `obrador`), `wall`, `counter`, `top`, `accent`, `floor`, `daylight`, `pizarra` (ver abajo), `pizarra_tiza`, `pizarra_fondo`. `exterior`: `grass`, `sky`, `path`, `trees`, `bench`, `stump` |
 | `music` | ver §7 |
 | `alt_hooks`, `loop_hint` | dos ganchos alternativos y cómo enlaza el final con el principio |
 | `beats` | la lista de planos (§2). **El último beat siempre es mudo.** |
+
+### La pizarra del `mostrador` (`set_options.pizarra`)
+Lo que dice la pizarra de la pared, escrito con tiza: `"set_options": {"variant": "cafeteria", "pizarra": "Hoy|lo de siempre"}`.
+- Líneas separadas por `|` (o un salto de línea), **4 como mucho** y cortas (≤ 20 letras: si no, la letra se encoge
+  para que quepa y en el teléfono cuesta leerla). Tildes, ñ, ¿ y ¡ salen bien (letra Patrick Hand, OFL).
+- Colores opcionales: `pizarra_tiza` (la letra, `#e9e4d6`) y `pizarra_fondo` (la pizarra, `#26302c`).
+- **Dónde se lee**: en `two_shot` y en los planos generales (`establishing`, `wide_room`); en los primeros planos no
+  sale. Para que el conflicto se lea en el **fotograma 0**, abre con `two_shot` (el lint avisa si abres con un primer
+  plano).
+- En la cafetería sustituye a las rayas del menú y, para que nada tape las letras, quita la lámpara del centro y la
+  planta de la balda. En el obrador, la pizarra ocupa el sitio del armario de pared (sin texto, el obrador no lleva
+  pizarra).
+- Sirve para cualquier negocio: el plato del día, un precio, un aviso («Hoy cerramos a las 3»). Sin marcas reales.
+- Las letras son mallas 3D (no dependen de ninguna fuente instalada): el render en la nube las ve igual.
+- Ejemplo: `uv run reels ejemplo cafeteria-moka`, añade `"pizarra": "Hoy,|lo de siempre"` a su `set_options`,
+  `uv run reels build cafeteria-moka` y `uv run reels render cafeteria-moka --quality preview --keyframes`.
 
 ## 2. Beat (un plano)
 

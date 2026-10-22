@@ -12,6 +12,7 @@ abajo. Si añades algo, regístralo en esta tabla (y la música, además, en `mu
 | Voz de la prueba de humo («¡Hola! Soy tu taza. Si me oyes, tu fábrica funciona.») | `humo/audio/` | Generada con ElevenLabs (voz pública «Maria - Warm & Energetic», eleven_v4) desde la cuenta de pago del curso | Uso comercial permitido por los términos de ElevenLabs para planes de pago; se distribuye solo como prueba de la fábrica |
 | Reel de ejemplo «La lámpara de las tres · El tema 4» (voces y música) | `ejemplos/lampara-de-las-tres/` | Voces generadas con ElevenLabs (voces públicas «Roberto - Conversational» y «Anita - Conversational», eleven_v4) y música compuesta con Eleven Music, desde la cuenta de pago del curso | Uso comercial permitido por los términos de ElevenLabs para planes de pago; se distribuye como ejemplo de la fábrica |
 | Tipografías Inter y JetBrains Mono (woff2, latin + latin-ext) | `../remotion/src/fonts/` | Google Fonts | SIL Open Font License 1.1 (`OFL-*.txt` al lado) |
+| Tipografía Patrick Hand (letra de tiza de la pizarra del decorado `mostrador`) | `fonts/` | Google Fonts (Patrick Wagesreiter) | SIL Open Font License 1.1 (`fonts/OFL-PatrickHand.txt`) |
 | Personajes (`characters/*/character.json`) | `characters/` | Datos (colores, medidas, voz) del proyecto original; los modelos 3D se construyen por código (`blender/rigs/`) | Parte del código de la fábrica |
 
 ## Fuera (y por qué)

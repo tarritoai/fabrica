@@ -110,7 +110,7 @@ Personajes nuevos: "objeto con cara" (`"placeholder": {"shape": "object"}` + blo
 acabados, cara, brazos, accesorios) o humano (`"shape": "human"` + bloque `human`). Guía para el usuario y opciones:
 `docs/personajes.md`. Comprueba siempre con `reels personaje <id>` y enseña la hoja. No copies el tarro de barro del curso (es la mascota de su marca).
 Decorados: `habitacion` (por defecto: cuarto-escritorio, ventana a la ciudad de noche o de día) y los genéricos `estudio`, `mostrador` (cafetería / obrador), `exterior`, con
-`set_options` (colores, variante).
+`set_options` (colores, variante; en `mostrador`, `pizarra`: lo que dice su pizarra, ver `docs/piezas.md`).
 Con quien manda, habla de sus personajes por su nombre (`docs/biblia.md`).
 
 ## Arquitectura

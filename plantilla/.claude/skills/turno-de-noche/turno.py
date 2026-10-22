@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
-from reels.system import keep_awake  # noqa: E402
+from reels.system import exit_cleanly_on_terminate, keep_awake  # noqa: E402
 
 EPISODES = ROOT / "episodes"
 PUBLISH = ROOT / "publicar"
@@ -37,6 +37,7 @@ class Shift:
         self.log = log
         self.steps: list[dict] = []  # {"variant", "name", "ok", "seconds", "tail"}
         self.checks: dict[str, tuple[int, int, list[str]]] = {}  # variant -> (ok lines, bad lines, bad texts)
+        self.cloud_note = ""  # what the final clean-up of the cloud said
 
     def run(self, variant: str, name: str, args: list[str]) -> bool:
         cmd = [sys.executable, "-m", "reels.cli", *args]
@@ -140,6 +141,11 @@ def report(shift: Shift, a: argparse.Namespace, started: datetime, done_ok: bool
         for v, (good, bad, texts) in shift.checks.items():
             lines.append(f"- {v}: {good} de {good + bad} frases bien" + (":" if bad else "."))
             lines += [f"  - {t}" for t in texts]
+    if a.cloud:
+        lines += ["", "## La nube",
+                  f"- Limpieza final: {shift.cloud_note.rstrip('.') or 'no se pudo comprobar'}.",
+                  "- Para quedarte tranquilo: console.vast.ai → Instances tiene que estar vacía "
+                  "(o `uv run reels cloud-cleanup`)."]
     lines += ["", f"## En `publicar/{slug}/`"]
     expected = [(f"{slug}.mp4", "el vídeo A")]
     if "B" in variants:
@@ -204,7 +210,9 @@ def main() -> int:
     if not a.sin_b and (EPISODES / b_slug / "script.json").exists():
         variants.append("B")
     ok = True
-    with keep_awake("turno de noche"):
+    # exit_cleanly_on_terminate: if the shift is told to stop (SIGTERM, a closed console on Windows), the `finally`
+    # below still destroys any rented machine. If the computer loses power, the machine's own guard does it.
+    with keep_awake("turno de noche"), exit_cleanly_on_terminate():
         try:
             ok = do_variant(shift, a.slug, "A", a, out / f"{a.slug}.mp4")
             if ok and a.portada:
@@ -212,8 +220,10 @@ def main() -> int:
             if ok and "B" in variants:
                 ok = do_variant(shift, b_slug, "B", a, out / f"{b_slug}.mp4")
         finally:
-            if a.cloud:  # a rented machine left running keeps charging: always clean up
+            if a.cloud:  # a rented machine left running keeps charging: always clean up (only machines nobody uses)
                 shift.run("-", "apagar máquinas de la nube", ["cloud-cleanup"])
+                shift.cloud_note = next((ln.strip() for ln in reversed(log.read_text(encoding="utf-8").splitlines())
+                                         if "✔" in ln or "✘" in ln), "")
     parte = report(shift, a, started, ok, variants)
     (out / "turno.pid").unlink(missing_ok=True)
     print(f"{'✔' if ok else '✘'} Parte de la mañana: {parte.relative_to(ROOT)}")

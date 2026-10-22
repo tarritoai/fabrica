@@ -111,7 +111,7 @@ def render_benchmark(quality: str = "final") -> dict:
     per_frame = max(0.05, (t4 - t1) / 3)
     total_min = per_frame * REEL_SECONDS * FPS / 60
     if total_min <= 45:
-        verdict, advice = "local", "tu ordenador sirve de horno: renderiza en local (gratis)."
+        verdict, advice = "local", "tu computadora sirve de horno: renderiza en local (gratis)."
     elif total_min <= 180:
         verdict, advice = "local de noche", ("en local tarda: déjalo renderizando de noche, o alquila una GPU "
                                              "(céntimos por reel) si tienes prisa.")

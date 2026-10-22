@@ -244,4 +244,6 @@ def test_every_render_keeps_the_computer_awake():
     calls = [i for i, line in enumerate(smoke) if "= _render_frames(blend" in line]
     assert calls and all(inside_keep_awake(smoke, i) for i in calls)
     cli = (root / "reels" / "cli.py").read_text(encoding="utf-8")
-    assert re.search(r"keep_awake\([^)]*\):\s*\n\s*console\.print\([^\n]*cloud_mod\.render", cli)
+    # The cloud render: awake, and a SIGTERM / closed terminal still runs the finally that destroys the machine.
+    assert re.search(r"keep_awake\([^)]*\), system\.exit_cleanly_on_terminate\(\):\s*\n\s*try:\s*\n\s*"
+                     r"console\.print\([^\n]*cloud_mod\.render", cli)

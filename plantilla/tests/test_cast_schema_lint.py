@@ -105,5 +105,33 @@ def test_lint_blocks_a_silent_opening(episode_in_tmp, humo_script):
     from reels.lint import lint
 
     humo_script["beats"] = humo_script["beats"][2:]  # starts with the mute beat
+    humo_script["slug"] = "mudo"
     episode_in_tmp("mudo", humo_script)
-    assert any(i.level == "ERROR" for i in lint("mudo"))
+    assert any(i.level == "ERROR" and "fotograma 0" in i.msg for i in lint("mudo"))
+
+
+def test_lint_blocks_a_b_hook_that_kept_the_a_slug(episode_in_tmp, humo_script):
+    """episodes/<slug>-b/ copied from A with A's slug inside: building it would overwrite A's files."""
+    from reels.lint import lint
+
+    episode_in_tmp("humo-b", humo_script)  # still says "slug": "humo"
+    errors = [i for i in lint("humo-b") if i.level == "ERROR"]
+    assert any('"humo-b"' in i.msg for i in errors)
+    humo_script["slug"] = "humo-c"
+    episode_in_tmp("humo-c", humo_script)
+    assert not [i for i in lint("humo-c") if i.level == "ERROR" and "slug" in i.msg]
+
+
+def test_lint_checks_the_chalkboard(episode_in_tmp, humo_script):
+    """set_options "pizarra": only in the mostrador set, ≤ 4 short lines, and not seen in a close-up."""
+    from reels.lint import lint
+
+    humo_script.update(slug="pizarra", set="mostrador",
+                       set_options={"variant": "cafeteria", "pizarra": "Hoy|lo de siempre|una línea demasiado larga para leerla|4|5"})
+    humo_script["beats"][0]["camera"] = "closeup_cosa"
+    episode_in_tmp("pizarra", humo_script)
+    msgs = " ".join(i.msg for i in lint("pizarra") if i.level == "AVISO")
+    assert "4 líneas como mucho" in msgs and "demasiado larga" in msgs and "two_shot" in msgs
+    humo_script.update(slug="cuarto", set="habitacion", set_options={"pizarra": "Hoy"})
+    episode_in_tmp("cuarto", humo_script)
+    assert any("solo existe en el decorado mostrador" in i.msg for i in lint("cuarto"))

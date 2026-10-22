@@ -17,7 +17,10 @@ Lee `episodes/<slug>/estado.md` y comprueba:
 - ✔ Puerta 3 (animática) aprobada. Si la Puerta 4 (preview) no lo está, avisa: "Vas a renderizar sin haber visto
   el movimiento. Es gratis en local, pero si algo se mueve raro lo verás mañana." Que decida.
 - `uv run reels lint <slug>` sin errores;
-- si existe `episodes/<slug>-b/`, que tenga sus voces (si no, el B se salta y lo dice el parte);
+- el **gancho B**: si existe `episodes/<slug>-b/`, que tenga sus voces (si no, el B se salta y lo dice el parte). Si
+  no existe, ofrécelo antes de lanzar: «¿Preparo el gancho B para esta noche?». Prepararlo es el paso 6 de la capa 5
+  de `/episodio` **sin render** (guion B, lint, voces con su OK de gasto y `publicar/<slug>/<slug>-b.txt`); el turno
+  lo cuece después del A. El B se cuece **entero** (es otro episodio): tarda, o cuesta en la nube, lo mismo que el A;
 - `publicar/<slug>/<slug>.txt` (texto del post): si falta, escríbelo ahora con quien manda (capa 5 de `/episodio`).
 Si algo falla, dilo en una línea y no lances el turno.
 
@@ -27,8 +30,11 @@ Si algo falla, dilo en una línea y no lances el turno.
   (en Mac con `caffeinate`, en Windows avisando al sistema, en Linux con `systemd-inhibit`), pero no puede impedir
   que alguien la apague ni que se quede sin batería.
 - **Nube** (si lo pide o si `uv run reels doctor --prueba-render` dijo que en local no le da tiempo): GPU alquilada,
-  céntimos por reel. **Pide el OK con el precio** (el saldo de Vast sale en `uv run reels doctor`). La máquina se
-  destruye siempre al acabar, también si algo falla; aun así, el parte lo confirma.
+  céntimos por reel (con gancho B, el doble). **Pide el OK con el precio** (el saldo de Vast sale en
+  `uv run reels doctor`). La máquina se destruye al acabar, también si algo falla, y al final del turno se limpia
+  cualquier máquina que haya quedado. Si la computadora se apaga o se queda sin internet a mitad, la propia máquina
+  se destruye sola a los 20 minutos (y como mucho a las 2 h 15 min de alquilarla): la fábrica no puede impedir el
+  apagón, pero sí que siga cobrando.
 
 ### 3. Lanzar (en segundo plano, para que pueda cerrar todo)
 ```
@@ -49,6 +55,8 @@ apague la computadora. Apunta en `estado.md`: "Turno de noche lanzado AAAA-MM-DD
 2. Si no hay `PARTE.md` pero sí `turno.pid`, el turno sigue en marcha o se cortó (la computadora se apagó o se
    durmió): mira la última línea de `turno.log` y dilo. Para seguir, se vuelve a lanzar: el render se reanuda donde
    se quedó.
+   **Si el turno era en la nube** (lo dice el parte o `turno.log`) y no hay `PARTE.md`, o el parte dice que la
+   limpieza falló: ejecuta `uv run reels cloud-cleanup` (solo destruye máquinas que nadie usa) y di lo que salga.
 3. Lee el parte y resúmelo en 4–6 líneas: ¿está el vídeo?, ¿alguna frase fuera de su plano en la comprobación?, qué
    falta en `publicar/<slug>/`.
 4. Lanza el `ojo` (modo movimiento) con `episodes/<slug>/sheet_0-3.png` y la hoja del final: lo que vea, en la misma

@@ -212,6 +212,108 @@ def rhubarb() -> str:
     return found
 
 
+# --- ssh (render in the cloud) -------------------------------------------------------------------------------------
+
+SSH_TOOLS = {"ssh": "SSH_BIN", "scp": "SCP_BIN", "ssh-keygen": "SSH_KEYGEN_BIN"}
+
+
+def ssh_candidates() -> list[Path]:
+    """Windows: folders where ssh.exe usually is even when it is not on the PATH (the OpenSSH client of Windows 10/11,
+    or the one that comes with Git for Windows, which installs without administrator rights)."""
+    if current_os() != "windows":
+        return []
+    env = os.environ
+    dirs = [Path(env.get("SystemRoot", r"C:\Windows")) / "System32" / "OpenSSH"]
+    for var, default in (("ProgramFiles", r"C:\Program Files"), ("ProgramW6432", r"C:\Program Files")):
+        dirs.append(Path(env.get(var, default)) / "Git" / "usr" / "bin")
+    if local := env.get("LOCALAPPDATA"):
+        dirs.append(Path(local) / "Programs" / "Git" / "usr" / "bin")
+    return dirs
+
+
+def find_ssh_tool(name: str) -> str | None:
+    """ssh, scp or ssh-keygen: .env (SSH_BIN…) → PATH → (Windows) the usual install folders."""
+    if found := find_tool(name, SSH_TOOLS.get(name)):
+        return found
+    if os.environ.get(SSH_TOOLS.get(name, ""), "").strip():
+        return None  # an explicit but wrong path must not be silently replaced
+    return next((str(d / exe(name)) for d in ssh_candidates() if (d / exe(name)).is_file()), None)
+
+
+def ssh_tool(name: str) -> str:
+    found = find_ssh_tool(name)
+    if not found:
+        raise RuntimeError(f"no encuentro «{name}» (hace falta para el render en la nube). Ejecuta `uv run reels "
+                           "doctor`: te dice cómo instalarlo en tu sistema.")
+    return found
+
+
+# --- processes -----------------------------------------------------------------------------------------------------
+
+
+def pid_alive(pid: int) -> bool:
+    """Is process `pid` still running? (Never os.kill(pid, 0) on Windows: there it would kill the process.)"""
+    if pid <= 0:
+        return False
+    if current_os() == "windows":
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            return False
+        try:
+            code = ctypes.c_ulong()
+            ok = kernel32.GetExitCodeProcess(handle, ctypes.byref(code))
+            return bool(ok) and code.value == 259  # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(handle)
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True  # it exists, it is just someone else's
+    except OSError:
+        return False
+    return True
+
+
+class exit_cleanly_on_terminate:
+    """Context manager: if the OS asks this process to stop (SIGTERM, a closed terminal, Windows' Ctrl+Break or a
+    closed console window), raise SystemExit so every `finally` runs. The cloud render needs it: its `finally`
+    destroys the rented machine."""
+
+    def __init__(self) -> None:
+        self.old: dict = {}
+
+    def _handler(self, signum, frame) -> None:  # noqa: ARG002
+        raise SystemExit(128 + int(signum))
+
+    def __enter__(self) -> "exit_cleanly_on_terminate":
+        import signal
+
+        names = ["SIGTERM", "SIGHUP", "SIGBREAK"]
+        for name in names:
+            sig = getattr(signal, name, None)
+            if sig is None:
+                continue
+            try:
+                self.old[sig] = signal.signal(sig, self._handler)
+            except (ValueError, OSError):  # not the main thread, or not allowed on this OS
+                pass
+        return self
+
+    def __exit__(self, *exc) -> None:
+        import signal
+
+        for sig, old in self.old.items():
+            try:
+                signal.signal(sig, old)
+            except (ValueError, OSError, TypeError):
+                pass
+
+
 # --- native tools and non-ASCII folders (Windows) ------------------------------------------------------------------
 # Some C++ tools read their arguments in the old Windows code page instead of Unicode. In a folder like
 # "C:\Users\María José\mi fábrica" they cannot open their files (seen in CI):

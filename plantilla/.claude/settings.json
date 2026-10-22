@@ -16,6 +16,8 @@
       "Bash(uv run reels ejemplo:*)",
       "Bash(uv run python .claude/skills/episodio/estimar_voz.py:*)",
       "Bash(uv run python .claude/skills/tarrito/comprobar.py:*)",
+      "Bash(uv run python .claude/skills/numeros/numeros.py:*)",
+      "Bash(uv run reels cloud-cleanup:*)",
       "Bash(uv run python .claude/skills/personaje/casting.py buscar:*)",
       "Bash(uv run python .claude/skills/personaje/casting.py estimar:*)",
       "Bash(uv run python .claude/skills/personaje/casting.py saldo:*)",

@@ -237,6 +237,40 @@ def check_rubberband() -> Check:
     return check
 
 
+def ssh_fix() -> str:
+    return hint(
+        windows="viene con Windows 10/11 (el «Cliente OpenSSH»); si falta, instala Git para Windows, que lo trae y no "
+                "pide administrador: winget install --id Git.Git -e --scope user  (y abre una terminal nueva). "
+                "Con contraseña de administrador también vale, en PowerShell como administrador: "
+                "Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0",
+        mac="viene con macOS: si falta, reinstala las herramientas de línea de comandos: xcode-select --install",
+        linux="si tienes la contraseña de administrador: sudo apt install openssh-client  (si no, pídesela a quien la "
+              "tenga; sin ssh solo se puede renderizar en local)")
+
+
+def check_ssh() -> list[Check]:
+    """ssh and ssh-keygen: only the cloud render needs them (reels/cloud.py). Missing is a «falta» only when there
+    is a Vast key (the student wants the cloud); otherwise a warning."""
+    wants_cloud = bool(os.environ.get("VAST_API_KEY", "").strip())
+    checks = []
+    for name, label in (("ssh", "ssh (render en la nube)"), ("ssh-keygen", "ssh-keygen (render en la nube)")):
+        path = system.find_ssh_tool(name)
+        if not path:
+            checks.append(Check(label, FAIL if wants_cloud else WARN,
+                                "no está: sin él no se puede alquilar una GPU (en local se renderiza igual)", ssh_fix()))
+            continue
+        if name == "ssh":
+            try:
+                out = _run([path, "-V"])
+            except (OSError, subprocess.TimeoutExpired) as e:
+                checks.append(Check(label, FAIL if wants_cloud else WARN, f"está pero no arranca: {e}", ssh_fix()))
+                continue
+            checks.append(Check(label, OK, f"{(out.splitlines() or ['?'])[0][:60]}  ({path})"))
+        else:
+            checks.append(Check(label, OK, path))
+    return checks
+
+
 def check_furniture() -> Check:
     folder = ROOT / "assets" / "vendor" / "kenney_furniture" / "Models" / "GLTF format"
     n = len(list(folder.glob("*.glb"))) if folder.is_dir() else 0
@@ -346,6 +380,29 @@ def check_vast(client: httpx.Client) -> Check:
     return Check("VAST_API_KEY", FAIL, f"{_mask(key)}  no funciona (HTTP {r.status_code})", "copia otra vez la clave en .env")
 
 
+def check_vast_machines() -> Check | None:
+    """Machines of the fábrica still on in Vast with no render using them (the computer switched off mid-render and
+    their own guard failed too): they keep billing until someone destroys them."""
+    if not os.environ.get("VAST_API_KEY", "").strip():
+        return None
+    from reels import cloud
+
+    try:
+        with cloud._client() as c:
+            lost, busy = cloud.orphans(c)
+    except (cloud.CloudError, httpx.HTTPError, ValueError, KeyError) as e:
+        return Check("máquinas en la nube", WARN, f"no he podido mirarlas: {str(e)[:100]}",
+                     "mira console.vast.ai → Instances: tiene que estar vacía si no estás renderizando")
+    if lost:
+        usd_h = sum(float(m.get("dph_total") or 0) for m in lost)
+        return Check("máquinas en la nube", FAIL, f"{len(lost)} encendida(s) sin ningún render que las use: siguen "
+                     f"cobrando (~{usd_h:.2f} $/h)", "uv run reels cloud-cleanup  (las destruye; no toca las que estén "
+                     "renderizando ahora en esta computadora)")
+    if busy:
+        return Check("máquinas en la nube", OK, f"{len(busy)} renderizando ahora mismo (se destruyen solas al acabar)")
+    return Check("máquinas en la nube", OK, "ninguna encendida")
+
+
 def check_instagram() -> Check:
     if not os.environ.get("IG_ACCESS_TOKEN", "").strip():
         return Check("IG_ACCESS_TOKEN", OK, "vacío (opcional: solo para leer métricas de Instagram)")
@@ -371,11 +428,12 @@ def collect(skip_api: bool = False) -> list[tuple[str, list[Check]]]:
     system.setup_path()
     base = [check_python(), check_brew(), check_uv(), check_git(), check_node(), check_remotion_deps(), *check_ffmpeg(),
             check_blender(), *check_whisper(), check_rhubarb(), check_rubberband(), check_furniture(),
-            check_emoji_font(), check_project_path()]
+            check_emoji_font(), check_project_path(), *check_ssh()]
     secrets = [check_env_ignored(), check_anthropic(shell_env, file_env)]
     if not skip_api:
         with httpx.Client(timeout=15) as client:
-            secrets += [check_elevenlabs(client), check_vast(client), check_instagram()]
+            secrets += [check_elevenlabs(client), check_vast(client), check_vast_machines(), check_instagram()]
+    secrets = [c for c in secrets if c]
     return [("Programas", [c for c in base if c]), ("Claves", secrets)]
 
 

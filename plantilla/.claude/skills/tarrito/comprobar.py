@@ -294,10 +294,19 @@ def c_tabla(s, cfg):
     return None
 
 
+# «No sé» is not «no»: these are taken out of an answer before looking for the right one (whole words only).
+DOUBTS = ("no lo se", "no se", "ni idea", "no tengo ni idea", "no estoy seguro", "no estoy segura", "no estoy segure",
+          "no me acuerdo", "no lo tengo claro", "no lo recuerdo")
+
+
 def c_pregunta(s, cfg, answer: str | None):
     if answer is None:
         return f"PREGUNTA: {s['pregunta']}"
     a = f" {norm(answer)} "
+    for d in sorted(DOUBTS, key=len, reverse=True):
+        a = re.sub(rf"(?<!\S){re.escape(d)}(?!\S)", " ", a)
+    if any(f" {norm(r)} " in a for r in s.get("rechazar", [])):  # the wrong answer said outright («sí, deja de cobrar»)
+        return s["falta"]
     return None if any(f" {norm(r)} " in a for r in s["respuestas"]) else s["falta"]
 
 

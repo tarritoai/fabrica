@@ -86,8 +86,18 @@ y recomienda horno local o alquilado.
 - **UTF-8 explícito** en toda lectura/escritura de texto y en la salida de subprocesos (whisper en Windows); la
   consola se reconfigura a UTF-8 (Claude Code lee la salida por una tubería) y los hijos heredan `PYTHONUTF8=1`.
   Un test estático impide que vuelva a entrar código sin `encoding`.
-- `os.devnull` en vez de `/dev/null` (ssh a Vast desde Windows); el script que reubica las pantallas en la nube
-  entiende rutas `C:\…`.
+- Render en la nube igual en los tres sistemas: los scripts viajan a la máquina por la entrada de `ssh` (nunca como
+  argumento: PowerShell, zsh y bash no tocan comillas ni `$`), los archivos suben y bajan por `ssh` con su tamaño
+  comprobado (sin `scp`: su protocolo y su manejo de `C:` cambian entre versiones), `known_hosts` propio con la ruta
+  entre comillas y con `/` (no `/dev/null` ni `NUL`), `BatchMode` (nunca se queda esperando una contraseña) y, en
+  Windows, `ssh` se busca también en el cliente OpenSSH del sistema y en Git para Windows. El script que reubica las
+  pantallas en la nube entiende rutas `C:\…`.
+- **Dinero en la nube, por capas**: la máquina lleva un *seguro* (`onstart` de Vast) que la destruye sola con su
+  clave de instancia si esta computadora deja de dar señales 20 min (apagón, sin internet) o a las 2 h 15 min pase lo
+  que pase; aquí, `finally` + SIGTERM/cerrar la terminal la destruyen; y `reels doctor` / `reels render --cloud` /
+  `reels cloud-cleanup` encuentran las huérfanas (las de ningún render vivo de esta computadora, `.cache/nube/`).
+  Ensayo del lado de la máquina con Docker (Ubuntu 22.04 + sshd + una API falsa): seguro armado, latido, render
+  desacoplado, subida/bajada íntegras y autodestrucción a los ~25 s de silencio.
 - Abrir resultados con el abridor del SO (`os.startfile` / `open` / `xdg-open`), sin fallar si no hay.
 - `requires-python >=3.12` (el código usa f-strings de 3.12) + `.python-version`.
 - ffmpeg ≥ 7 comprobado por la opción real que hace falta (`afir … irnorm`), no solo por el número de versión.

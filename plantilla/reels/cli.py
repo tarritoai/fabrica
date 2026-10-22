@@ -29,7 +29,7 @@ def main() -> None:
 def doctor(
     skip_api: bool = typer.Option(False, "--skip-api", help="No comprobar las claves (sin internet)."),
     as_json: bool = typer.Option(False, "--json", help="Salida en JSON (para el instalador y la CI)."),
-    render_test: bool = typer.Option(False, "--prueba-render", help="Mide cuánto tardaría tu ordenador en renderizar un reel."),
+    render_test: bool = typer.Option(False, "--prueba-render", help="Mide cuánto tardaría tu computadora en renderizar un reel."),
 ) -> None:
     """¿Está todo instalado? Revisa cada pieza y, si falta algo, te da el comando exacto para tu sistema."""
     ok = doctor_mod.run(skip_api=skip_api, as_json=as_json)
@@ -42,7 +42,7 @@ def doctor(
         console.print("\n[bold]Prueba de render[/] (unos fotogramas a calidad final; puede tardar un par de minutos)…")
         r = smoke.render_benchmark()
         console.print(f"  {r['seconds_per_frame']} s por fotograma → un reel de 30 s tardaría "
-                      f"~{r['minutes_for_30s_reel']:.0f} min en tu ordenador")
+                      f"~{r['minutes_for_30s_reel']:.0f} min en tu computadora")
         console.print(f"[bold]  Recomendación:[/] {r['advice']}")
     if not ok:
         raise typer.Exit(1)
@@ -273,19 +273,38 @@ def render(
         load_dotenv(ROOT / ".env")
         # A laptop that falls asleep drops the SSH session while the rented GPU keeps billing: stay awake until the
         # machine is destroyed.
-        with system.keep_awake("reels render --cloud"):
-            console.print(f"[green]✔[/] {cloud_mod.render(slug, quality, max_price, offer or None, fast)}")
+        # Closing the terminal or a SIGTERM must still run the `finally` that destroys the machine.
+        with system.keep_awake("reels render --cloud"), system.exit_cleanly_on_terminate():
+            try:
+                console.print(f"[green]✔[/] {cloud_mod.render(slug, quality, max_price, offer or None, fast)}")
+            except cloud_mod.CloudError as e:
+                console.print(f"[red bold]✘ render en la nube:[/] {escape(str(e))}")
+                raise typer.Exit(1)
         return
     console.print(f"[green]✔[/] {build_mod.render(slug, quality, keyframes)}")
 
 
 @app.command("cloud-cleanup")
-def cloud_cleanup() -> None:
-    """Destruye cualquier máquina de render que se haya quedado encendida en Vast.ai."""
+def cloud_cleanup(
+    todas: bool = typer.Option(False, "--todas", help="También las que usa un render en marcha en esta computadora."),
+) -> None:
+    """Destruye las máquinas de render que se hayan quedado encendidas en Vast.ai sin que nadie las use."""
     from reels import cloud as cloud_mod
 
     load_dotenv(ROOT / ".env")
-    console.print(f"[green]✔[/] {cloud_mod.cleanup()} máquinas destruidas")
+    try:
+        with cloud_mod._client() as c:
+            done, busy = cloud_mod.destroy_orphans(c, everything=todas)
+    except Exception as e:  # noqa: BLE001  no key, no internet: say it plainly
+        console.print(f"[red bold]✘ no he podido revisar Vast:[/] {escape(str(e))}")
+        raise typer.Exit(1)
+    if done:
+        console.print(f"[green]✔[/] {len(done)} máquina(s) destruida(s): ya no cobran")
+    else:
+        console.print("[green]✔[/] No había ninguna máquina de la fábrica encendida sin usar.")
+    if busy:
+        console.print(f"  {len(busy)} máquina(s) en uso por un render en marcha en esta computadora: no las toco "
+                      "(se destruyen solas al acabar; `--todas` para cortarlas ya).")
 
 
 @app.command()

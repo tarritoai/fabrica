@@ -658,7 +658,9 @@ class Episode(BaseModel):
     set: Set = Set.habitacion
     set_options: dict[str, str | bool | float] = Field(default_factory=dict, description=(
         "Colours and switches of the set, e.g. {\"window\": \"dia\", \"wall\": \"#6f8a74\"} (habitacion), {\"background\": \"#e8dcc8\"} (estudio), "
-        "{\"variant\": \"obrador\", \"accent\": \"#2f6b5a\"} (mostrador), {\"grass\": \"#86b35c\"} (exterior)."))
+        "{\"variant\": \"obrador\", \"accent\": \"#2f6b5a\"} (mostrador), {\"grass\": \"#86b35c\"} (exterior). "
+        "mostrador also takes \"pizarra\": the words of its chalkboard, lines split by | (max 4, short), e.g. "
+        "\"Hoy|lo de siempre\"; it reads in two_shot and wide shots, not in close-ups."))
     loop_hint: str
     alt_hooks: list[str] = Field(description="Two alternative first lines (hook candidates).")
     hook: str | None = Field(None, description="Short hook text shown at the top for the first ~2.5 s (what the reel is about, 3-7 words).")

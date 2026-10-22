@@ -32,6 +32,12 @@ def main() -> None:
         "anchors": sorted(k for k in anchors),
         "slots": sorted(anchors.get("slots", {})),
         "world_color": list(bg.inputs["Color"].default_value)[:3] if bg else None,
+        # The chalkboard (mostrador): its words are meshes (no font file needed by the cloud machine).
+        "chalk": {o.name: {"type": o.type, "verts": len(o.data.vertices) if o.type == "MESH" else 0,
+                           "width": round(o.dimensions.x, 3), "height": round(o.dimensions.y, 3),
+                           "loc": [round(v, 3) for v in o.matrix_world.translation]}
+                  for o in bpy.data.objects if o.name.startswith(("chalk", "pendant_bulb"))},
+        "font_curves": sum(1 for c in bpy.data.curves if c.bl_rna.identifier == "TextCurve"),
     }), encoding="utf-8")
 
 

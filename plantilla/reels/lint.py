@@ -75,8 +75,14 @@ def lint(slug: str) -> list[Issue]:
     issues: list[Issue] = []
     add = lambda level, where, msg: issues.append(Issue(level, where, msg))  # noqa: E731
 
+    # --- The folder and the script agree (a B hook copied from A keeps A's slug: building it would overwrite A).
+    if ep.slug != slug:
+        add("ERROR", "guion", f"el script.json de episodes/{slug}/ dice \"slug\": \"{ep.slug}\": tiene que decir "
+                              f"\"{slug}\" (si no, voces, escena y render irían a episodes/{ep.slug}/)")
+
     # --- Opening: a voice on frame 0, readable on a phone.
     first = ep.beats[0]
+    _board(ep, first, add)
     if not first.line and not first.event:
         add("ERROR", f"beat {first.id}", "ni voz ni pantalla legible en el fotograma 0 (un reel que abrió así perdió al 48 % en <3 s)")
     elif not first.line:
@@ -178,6 +184,26 @@ def lint(slug: str) -> list[Issue]:
         if ep.music and "Música:" not in text:
             add("ERROR", "post", "falta el crédito de la música")
     return issues
+
+
+def _board(ep: Episode, first, add) -> None:
+    """set_options "pizarra" (the chalkboard of the mostrador set): is it going to be seen and read?"""
+    text = str(ep.set_options.get("pizarra") or "").strip()
+    if not text:
+        return
+    lines = [ln.strip() for part in text.split("|") for ln in part.split("\n") if ln.strip()]
+    if ep.set.value != "mostrador":
+        add("AVISO", "decorado", f"set_options.pizarra solo existe en el decorado mostrador (este es {ep.set.value}): no saldrá")
+        return
+    if len(lines) > 4:
+        add("AVISO", "decorado", f"la pizarra enseña 4 líneas como mucho: «{' | '.join(lines[4:])}» no saldrá")
+    for ln in lines[:4]:
+        if len(ln) > 20:
+            add("AVISO", "decorado", f"línea de pizarra de {len(ln)} letras («{ln}»): la letra se encoge y en el teléfono "
+                                     "costará leerla (mejor ≤ 20, o pártela con |)")
+    if "closeup" in first.camera.value:
+        add("AVISO", f"beat {first.id}", "la pizarra no sale en un primer plano: si tiene que leerse en el fotograma 0, "
+                                         "abre con two_shot (o un plano general)")
 
 
 def _pace(tl: dict, out, add) -> None:
