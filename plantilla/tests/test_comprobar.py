@@ -123,3 +123,12 @@ def test_template_characters_are_all_listed_as_examples():
 def test_reels_ejemplo_is_pre_approved():
     allow = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))["permissions"]["allow"]
     assert "Bash(uv run reels ejemplo:*)" in allow
+
+
+def test_answers_ignore_end_dots_but_keep_inner_ones():
+    norm = _module().norm
+    assert norm("No.") == norm("no") == "no"
+    assert norm("La puntuación.") == "la puntuacion"
+    assert norm("script.json.") == "script.json"
+    assert norm("reels/x.mp4") == "reels/x.mp4"
+    assert norm("Sí, ¡TÚ!") == "si tu"

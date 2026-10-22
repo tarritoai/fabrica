@@ -45,10 +45,11 @@ CODE = re.compile(r"`[^`\n]*`")
 # --- helpers -------------------------------------------------------------------------------------------------------
 
 def norm(text: str) -> str:
-    """lowercase, no accents, no punctuation except spaces: 'Sí, ¡TÚ!' -> 'si tu'."""
+    """lowercase, no accents, no punctuation except inner dots and slashes: 'Sí, ¡TÚ!' -> 'si tu'."""
     text = unicodedata.normalize("NFKD", text.lower())
     text = "".join(c for c in text if not unicodedata.combining(c))
-    return " ".join(re.sub(r"[^a-z0-9/.]+", " ", text).split())
+    words = re.sub(r"[^a-z0-9/.]+", " ", text).split()
+    return " ".join(w.strip(".") for w in words if w.strip("."))  # 'script.json.' -> 'script.json'
 
 
 def lot_id(text: str) -> str:
