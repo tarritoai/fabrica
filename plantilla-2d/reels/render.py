@@ -208,7 +208,7 @@ def character_sheet(piece: str, title: str, variants: list[dict], dest: Path, ba
     pfile = dest.with_suffix(".props.json")
     pfile.write_text(json.dumps(props, ensure_ascii=False), encoding="utf-8")
     try:
-        run(remotion("still", entry(slug or "_hojas"), "Hoja", str(dest), f"--props={pfile}", "--log=error"),
+        run(remotion("still", entry(slug or "hojas"), "Hoja", str(dest), f"--props={pfile}", "--log=error"),
             dest.with_suffix(".log"), "la hoja del personaje (Remotion)")
     finally:
         pfile.unlink(missing_ok=True)
