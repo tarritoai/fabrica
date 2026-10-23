@@ -151,6 +151,11 @@ def specs(plat: str | None = None) -> dict[str, Spec]:
 
 
 ORDEN = ["blender", "ffmpeg", "whisper", "modelo", "rhubarb", "node", "emojis"]
+ORDEN_2D = ["ffmpeg", "whisper", "modelo", "node"]  # the 2D factory: no Blender, no Rhubarb, no emoji font
+
+
+def orden(tipo: str = "3d") -> list[str]:
+    return ORDEN_2D if tipo == "2d" else ORDEN
 NOMBRES = {"modelo": "modelo de whisper (~490 MB)", "emojis": "fuente de emojis"}
 
 
@@ -260,11 +265,81 @@ def _probar_ffmpeg_completo(binario: Path) -> str | None:
 # --- install one tool ----------------------------------------------------------------------------------------------
 
 
+def _enlazar_o_copiar(src: str, dst: str) -> str:
+    """Hard link (same disk: no extra space, instant) or, if the system does not allow it, a plain copy."""
+    try:
+        os.link(src, dst)
+    except OSError:
+        shutil.copy2(src, dst)
+    return dst
+
+
+def reutilizar(clave: str, proyecto: Path) -> bool:
+    """Take a tool (or the whisper model) from another factory of this computer that already has the same pinned
+    version: the 2D «nave» next to a 3D factory downloads nothing twice. False if there is nothing to reuse."""
+    from .plantilla import otras_fabricas  # (plantilla imports nothing from here)
+
+    for otra, _tipo in otras_fabricas(proyecto):
+        if clave == "modelo":
+            src = otra / "models" / "ggml-small.bin"
+            if src.exists() and src.stat().st_size == MODEL_SIZE:
+                dst = proyecto / "models" / "ggml-small.bin"
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                if dst.exists():
+                    dst.unlink()
+                _enlazar_o_copiar(str(src), str(dst))
+                decir(f"modelo de whisper: reutilizado de tu otra fábrica ({otra})", "✔")
+                return True
+            continue
+        spec = specs().get(clave)
+        previo = _registro(otra).get(clave)
+        if not spec or not previo or previo.get("version") != spec.version:
+            continue
+        origen_bin = Path(previo["bin"]) if Path(previo["bin"]).is_absolute() else otra / previo["bin"]
+        try:
+            rel_bin = origen_bin.resolve().relative_to((otra / "tools").resolve())
+        except ValueError:  # outside its tools/ (Homebrew on a Mac): point to the same program
+            ok, info = probar(clave, origen_bin)
+            if not ok:
+                continue
+            reg = _registro(proyecto)
+            reg[clave] = {"version": spec.version, "bin": str(origen_bin), "env": dict(previo.get("env") or {})}
+            _guardar_registro(proyecto, reg)
+            decir(f"{spec.nombre}: el mismo de tu otra fábrica ({info})", "✔")
+            return True
+        carpeta = rel_bin.parts[0]
+        origen = otra / "tools" / carpeta
+        destino = proyecto / "tools" / carpeta
+        if not origen.is_dir():
+            continue
+        if destino.exists():
+            borrar(destino)
+        shutil.copytree(origen, destino, symlinks=True, copy_function=_enlazar_o_copiar)
+        binario = proyecto / "tools" / rel_bin
+        ok, info = probar(clave, binario)
+        if not ok:
+            borrar(destino)
+            continue
+        env = {}
+        for var, ruta in (previo.get("env") or {}).items():
+            p = Path(ruta)
+            env[var] = ruta if p.is_absolute() else _rel(proyecto, proyecto / p)
+        reg = _registro(proyecto)
+        reg[clave] = {"version": spec.version, "bin": _rel(proyecto, binario), "env": env}
+        _guardar_registro(proyecto, reg)
+        decir(f"{spec.nombre}: reutilizado de tu otra fábrica, sin descargar nada ({info})", "✔")
+        return True
+    return False
+
+
 def instalar(clave: str, proyecto: Path, forzar: bool = False) -> None:
     """Install one tool (see ORDEN) into proyecto/tools. Raises FabricaError with a plain explanation."""
     tools = proyecto / "tools"
     tools.mkdir(parents=True, exist_ok=True)
     if clave == "modelo":
+        destino = proyecto / "models" / "ggml-small.bin"
+        if not forzar and not (destino.exists() and destino.stat().st_size == MODEL_SIZE) and reutilizar(clave, proyecto):
+            return None
         return _modelo(proyecto, forzar)
     if clave == "emojis":
         return _emojis()
@@ -287,6 +362,9 @@ def instalar(clave: str, proyecto: Path, forzar: bool = False) -> None:
             decir(f"{spec.nombre}: ya está ({info})", "✔")
             return
         decir(f"{spec.nombre}: estaba instalado pero no arranca ({info}); lo reinstalo", "!")
+    elif not forzar and reutilizar(clave, proyecto):
+        escribir_env(proyecto)
+        return
     decir(f"{spec.nombre} {spec.version}", "→")
 
     if clave == "whisper" and sistema() == "mac":
@@ -589,11 +667,13 @@ def _emojis() -> None:
     decir("fuente de emojis: instalada solo para tu usuario", "✔")
 
 
-def estado(proyecto: Path) -> dict[str, dict]:
+def estado(proyecto: Path, tipo: str = "3d") -> dict[str, dict]:
     """What is installed (for `fabrica estado`)."""
     reg = _registro(proyecto)
     out = {}
     for clave, spec in specs().items():
+        if clave not in orden(tipo):
+            continue
         r = reg.get(clave)
         out[clave] = {"nombre": spec.nombre, "fijada": spec.version, "instalada": r.get("version") if r else None,
                       "bin": r.get("bin") if r else None}

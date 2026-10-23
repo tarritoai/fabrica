@@ -9,7 +9,7 @@
     {
       "name": "fabrica",
       "source": "./plugin",
-      "description": "Instala tu fábrica de reels (Blender, ffmpeg, whisper, Remotion) sin permisos de administrador, te ayuda si algo falla y la mantiene al día sin tocar tu memoria.",
+      "description": "Instala tu fábrica de reels (Blender, ffmpeg, whisper, Remotion) y su nave 2D «¿Y si…?» (sin Blender) sin permisos de administrador, te ayuda si algo falla y las mantiene al día sin tocar tu memoria.",
       "category": "productivity",
       "tags": [
         "curso",

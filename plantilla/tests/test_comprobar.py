@@ -41,7 +41,7 @@ def test_every_lot_uses_a_known_check():
     mod = _module()
     cfg = json.loads((ROOT / CHECKS).read_text(encoding="utf-8"))
     known = set(mod.TYPES) | {"pregunta", "lotes"}
-    assert len(cfg["lotes"]) == 50
+    assert len(cfg["lotes"]) == 55  # 50 lessons + the module «La nave de enfrente» (A·1–A·5)
     for lot in cfg["lotes"]:
         assert mod.lot_id(lot["lote"]) == lot["lote"]
         assert {c["tipo"] for c in lot["comprobaciones"]} <= known, lot["lote"]
@@ -182,3 +182,22 @@ def test_lot_titles_say_computadora():
 def test_numeros_is_pre_approved():
     allow = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))["permissions"]["allow"]
     assert "Bash(uv run python .claude/skills/numeros/numeros.py:*)" in allow
+
+
+def test_module_lots_look_into_the_2d_factory(tmp_path):
+    """A·2–A·5 are done in the 2D factory («la nave de enfrente»): checked from here, they look there."""
+    p = _project(tmp_path)
+    r = _run(p, "A·2")
+    assert r.returncode == 1 and "/fabrica:nave" in r.stdout
+    nave = tmp_path / "nave-2d"
+    (nave / ".fabrica").mkdir(parents=True)
+    (nave / ".claude").mkdir()
+    (nave / ".fabrica" / "plantilla.json").write_text(json.dumps({"tipo": "2d"}), encoding="utf-8")
+    (nave / "episodes" / "humo").mkdir(parents=True)
+    (nave / "episodes" / "humo" / "final.mp4").write_bytes(b"\0" * 200_000)
+    r = _run(p, "a.2")
+    assert r.returncode == 0 and "APROBADO · A·2" in r.stdout, r.stdout
+    brief = p / "curso" / "ejercicios" / "encargo.md"
+    brief.parent.mkdir(parents=True)
+    brief.write_text("# Encargo\n- motor: dibujo\n- voz: narrador\n- puertas: guion\n- gasto: voces\n", encoding="utf-8")
+    assert _run(p, "A1").returncode == 0

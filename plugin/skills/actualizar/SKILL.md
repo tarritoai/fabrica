@@ -20,7 +20,8 @@ FABRICA es:
 - **Windows:** `powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/fabrica.ps1" PASO [opciones]`
 
 Lanza cada comando con el tiempo máximo de la herramienta (600000 ms). CARPETA es la carpeta de la fábrica (la actual
-si tiene `reels/` y `curso/`; si no, pregunta).
+si tiene `reels/` y `curso/`; si no, pregunta). Vale igual para la fábrica 3D y para la nave 2D: el instalador sabe
+de cuál se trata. Si tiene las dos, actualiza una y luego la otra (pregunta por cuál empieza).
 
 ## Pasos
 1. **Traer la versión nueva del curso.** `claude plugin marketplace update tarritoai` y luego

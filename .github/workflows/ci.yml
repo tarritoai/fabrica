@@ -1,5 +1,6 @@
 # CI of the factory: validates the plugin, then installs it FOR REAL on Windows, macOS (Apple Silicon) and Linux the
 # way /fabrica:instalar does (no administrator, tools inside the project) and renders the free smoke-test video.
+# Both factories: the 3D one (plantilla/) and the 2D «¿Y si…?» one (plantilla-2d/, /fabrica:nave).
 # Downloads are cached by the hash of the pinned versions (plugin/scripts/fabrica_lib/herramientas.py).
 name: CI
 
@@ -43,6 +44,9 @@ jobs:
       - name: Tests de la plantilla
         working-directory: plantilla
         run: uv run --group dev pytest -q
+      - name: Tests de la plantilla 2D
+        working-directory: plantilla-2d
+        run: uv run --group dev pytest -q
       - name: Scripts de arranque (shellcheck y PowerShell)
         run: |
           shellcheck plugin/scripts/fabrica.sh
@@ -79,21 +83,39 @@ jobs:
           python3 tools/check_version_bump.py "$base"
 
   instalar:
-    name: Instalar y humo · ${{ matrix.os }}${{ matrix.tilde && ' · María José' || '' }}
+    name: Instalar y humo ${{ matrix.tipo }} · ${{ matrix.os }}${{ matrix.tilde && ' · María José' || '' }}
     needs: validar
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
+    env:
+      TIPO: ${{ matrix.tipo }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-14, ubuntu-22.04, ubuntu-24.04]
         tilde: [false]
+        tipo: [3d]
         include:
           # A user and a project folder with a space and accents, where the risk is (third-party C++ tools on Windows).
           - os: windows-latest
             tilde: true
+            tipo: 3d
           - os: ubuntu-24.04
             tilde: true
+            tipo: 3d
+          # The 2D factory («la nave de enfrente»): no Blender, no Rhubarb, no graphics card.
+          - os: windows-latest
+            tilde: false
+            tipo: 2d
+          - os: windows-latest
+            tilde: true
+            tipo: 2d
+          - os: macos-14
+            tilde: false
+            tipo: 2d
+          - os: ubuntu-24.04
+            tilde: false
+            tipo: 2d
     steps:
       - uses: actions/checkout@v4
 
@@ -144,19 +166,19 @@ jobs:
         shell: bash
         run: |
           set +e
-          bash plugin/scripts/fabrica.sh todo --proyecto "$PROYECTO" --hasta dependencias
+          bash plugin/scripts/fabrica.sh todo --tipo "$TIPO" --proyecto "$PROYECTO" --hasta dependencias
           rc=$?
           if [ $rc -ne 0 ] && [ "$RUNNER_OS" = "macOS" ] && grep -q "mac-rosetta" "$PROYECTO/logs/instalacion.log"; then
             echo "::warning::Rosetta no se instala sin administrador en este Mac: hago lo que haría el alumno en Terminal"
             sudo softwareupdate --install-rosetta --agree-to-license
-            bash plugin/scripts/fabrica.sh todo --proyecto "$PROYECTO" --hasta dependencias; rc=$?
+            bash plugin/scripts/fabrica.sh todo --tipo "$TIPO" --proyecto "$PROYECTO" --hasta dependencias; rc=$?
           fi
           exit $rc
       - name: Instalar (Windows PowerShell 5.1, como el alumno)
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          powershell -NoProfile -ExecutionPolicy Bypass -File plugin\scripts\fabrica.ps1 todo --proyecto "$env:PROYECTO" --hasta dependencias
+          powershell -NoProfile -ExecutionPolicy Bypass -File plugin\scripts\fabrica.ps1 todo --tipo "$env:TIPO" --proyecto "$env:PROYECTO" --hasta dependencias
           exit $LASTEXITCODE
 
       - name: reels doctor --json
@@ -168,32 +190,59 @@ jobs:
           uv run python -c "import json,sys; d=json.load(open('doctor.json',encoding='utf-8')); bad=[c for c in d['checks'] if c['status']=='falta']; print(bad or 'doctor ok'); sys.exit(1 if bad or not d['ok'] else 0)"
 
       - name: reels humo (Cycles en CPU, sin comprobar)
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && matrix.tipo == '3d'
         shell: bash
         run: bash plugin/scripts/fabrica.sh humo --proyecto "$PROYECTO" --motor cycles --sin-comprobar
       - name: reels humo (Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.tipo == '3d'
         shell: powershell
         run: |
           powershell -NoProfile -ExecutionPolicy Bypass -File plugin\scripts\fabrica.ps1 humo --proyecto "$env:PROYECTO" --motor cycles --sin-comprobar
           exit $LASTEXITCODE
+      - name: reels humo 2D (Mac / Linux)
+        if: runner.os != 'Windows' && matrix.tipo == '2d'
+        shell: bash
+        run: bash plugin/scripts/fabrica.sh humo --proyecto "$PROYECTO" --sin-comprobar
+      - name: reels humo 2D (Windows)
+        if: runner.os == 'Windows' && matrix.tipo == '2d'
+        shell: powershell
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File plugin\scripts\fabrica.ps1 humo --proyecto "$env:PROYECTO" --sin-comprobar
+          exit $LASTEXITCODE
+      - name: Ejemplo 2D completo (quijote-gafas, voces de la caché, 0 créditos)
+        if: matrix.tipo == '2d'
+        shell: bash
+        working-directory: ${{ env.PROYECTO }}
+        run: uv run reels ejemplo quijote-gafas --no-abrir
 
       - name: El oído (whisper) escucha el vídeo
         shell: bash
         working-directory: ${{ env.PROYECTO }}
         run: uv run reels check humo
 
-      - name: Entregable 1·5 (/fabrica:tarrito comprobar)
+      - name: Entregable 1·5 / A·2 (/fabrica:tarrito comprobar)
         shell: bash
         run: |
+          lote=1.5; [ "$TIPO" = "2d" ] && lote=A.2
           if [ "$RUNNER_OS" = "Windows" ]; then
-            powershell.exe -NoProfile -ExecutionPolicy Bypass -File plugin/scripts/fabrica.ps1 comprobar 1.5 --proyecto "$PROYECTO"
+            powershell.exe -NoProfile -ExecutionPolicy Bypass -File plugin/scripts/fabrica.ps1 comprobar "$lote" --proyecto "$PROYECTO"
           else
-            bash plugin/scripts/fabrica.sh comprobar 1.5 --proyecto "$PROYECTO"
+            bash plugin/scripts/fabrica.sh comprobar "$lote" --proyecto "$PROYECTO"
           fi
 
+      - name: La nave 2D al lado de la fábrica 3D reutiliza sus herramientas
+        if: matrix.os == 'ubuntu-24.04' && matrix.tipo == '3d' && !matrix.tilde
+        shell: bash
+        run: |
+          bash plugin/scripts/fabrica.sh preparar --tipo 2d --proyecto "$PROYECTO-2d"
+          bash plugin/scripts/fabrica.sh herramientas --proyecto "$PROYECTO-2d" | tee nave.log
+          test "$(grep -c "reutilizado" nave.log)" -ge 4
+          bash plugin/scripts/fabrica.sh dependencias --proyecto "$PROYECTO-2d"
+          bash plugin/scripts/fabrica.sh humo --proyecto "$PROYECTO-2d"
+          bash plugin/scripts/fabrica.sh comprobar A.2 --proyecto "$PROYECTO"
+
       - name: Mac sin Homebrew → whisper.cpp construido aquí (informativo)
-        if: runner.os == 'macOS' && !matrix.tilde
+        if: runner.os == 'macOS' && !matrix.tilde && matrix.tipo == '3d'
         continue-on-error: true
         shell: bash
         run: |
@@ -204,11 +253,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: humo-${{ matrix.os }}${{ matrix.tilde && '-tilde' || '' }}
+          name: humo-${{ matrix.tipo }}-${{ matrix.os }}${{ matrix.tilde && '-tilde' || '' }}
           if-no-files-found: warn
           path: |
             ${{ env.PROYECTO }}/episodes/humo/final.mp4
             ${{ env.PROYECTO }}/episodes/humo/*.log
+            ${{ env.PROYECTO }}/episodes/quijote-gafas/final.mp4
+            ${{ env.PROYECTO }}/episodes/quijote-gafas/fotogramas/hoja.jpg
             ${{ env.PROYECTO }}/doctor.json
             ${{ env.PROYECTO }}/logs/instalacion.log
 

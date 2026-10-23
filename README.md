@@ -10,6 +10,15 @@ script.json ─► voces (ElevenLabs) ─► tiempos + labios (whisper.cpp + Rhu
 Funciona en Mac (Apple Silicon), Windows 10/11 nativo y Linux. Lo único que cuesta dinero son las voces
 (ElevenLabs) y, opcionalmente, el render en una GPU alquilada (Vast.ai). Todo lo demás es local y gratis.
 
+Y una segunda fábrica, **la nave 2D** (`plantilla-2d/`, módulo «La nave de enfrente» del curso): reels «¿Y si…?»
+dibujados por código (SVG en Remotion), con narrador y personajes de ElevenLabs, contador y eventos colgados de las
+palabras. Sin Blender ni gráfica: un reel de 20 s se dibuja en 1–2 minutos en cualquier computadora.
+
+```
+script.json 2D ─► voces con tiempos por palabra (ElevenLabs) ─► timeline (eventos en su palabra)
+               ─► fotogramas clave (Remotion) ─► vídeo + música + efectos ─► -14 LUFS ─► comprobación (whisper)
+```
+
 ## Instalar (alumnos)
 
 En Claude Code (2.1.275 o posterior), abierto en la carpeta vacía que será tu fábrica (`C:\fabrica` en Windows,
@@ -21,13 +30,19 @@ En Claude Code (2.1.275 o posterior), abierto en la carpeta vacía que será tu 
 ```
 
 `/fabrica:instalar` elige contigo la carpeta de tu fábrica, instala todo **sin contraseñas de administrador** y
-termina con tu primer vídeo. Si algo falla: `/fabrica:tarrito` y pega el error. Detalle del plugin y de la ruta sin
+termina con tu primer vídeo. La nave 2D: `/fabrica:nave` (o `/fabrica:instalar 2d`), en su propia carpeta; si ya
+tienes la fábrica 3D, reutiliza sus herramientas y su modelo sin volver a descargarlos. Si algo falla: `/fabrica:tarrito` y pega el error. Detalle del plugin y de la ruta sin
 git: [`plugin/README.md`](plugin/README.md).
 
 ## Estructura
 
 ```
 fabrica/
+├── plantilla-2d/       la nave 2D «¿Y si…?»: misma receta (CLI `reels`, trabajadores, puertas), otro motor
+│   ├── reels/          schema 2D, voz con tiempos por palabra, timeline, render (Remotion), lint, check, doctor
+│   ├── remotion/src/   kit/ (el estilo de la casa: papel recortado), piezas/ (fondos, Persona, Cosa, Objeto),
+│   │                   personajes/ (los del alumno), episodios/<slug>/ (piezas de una historia)
+│   └── assets/         ejemplo «¿Y si Don Quijote llevara gafas?» con sus voces pagadas (caché), música, efectos
 ├── plantilla/          el proyecto que se copia a la carpeta del alumno (su fábrica, versionada con git)
 │   ├── reels/          CLI en Python (`uv run reels …`): schema, lint, voz, timeline, build, render, compose, check
 │   │   ├── system.py   TODO lo que depende del sistema operativo (rutas, binarios, abrir archivos, UTF-8, no dormir)
@@ -45,12 +60,13 @@ fabrica/
 │   ├── CLAUDE.md       instrucciones para Claude Code (responde en español, qué cuesta dinero…)
 │   └── tests/          pytest: multiplataforma, reparto, schema, lint, doctor
 ├── .claude-plugin/     marketplace «tarritoai» (marketplace.json) y su variante sin git (marketplace-sin-git.json)
-├── plugin/             plugin de Claude Code: /fabrica:instalar, /fabrica:tarrito, /fabrica:actualizar
+├── plugin/             plugin de Claude Code: /fabrica:instalar, /fabrica:nave, /fabrica:tarrito, /fabrica:actualizar
 │   └── scripts/        el instalador (fabrica.sh / fabrica.ps1 → fabrica.py, solo biblioteca estándar)
 ├── tests/              tests del instalador (sin red: un servidor local simula las descargas)
 ├── .github/workflows/  CI: valida el plugin e instala de verdad en Windows, macOS (arm64) y Ubuntu 22.04/24.04
-└── tools/              mantenimiento del repo (no va al alumno): gen_sfx.py (efectos CC0), gen_errores.py (tabla
-                        de errores), check_version_bump.py (CI), empaquetar.py (zip del plugin sin git)
+└── tools/              mantenimiento del repo (no va al alumno): gen_sfx.py (efectos CC0), gen_papel.py (textura
+                        de papel de la 2D), gen_errores.py (tabla de errores), check_version_bump.py (CI),
+                        empaquetar.py (zip del plugin sin git, con las dos plantillas)
 ```
 
 Por qué así: las skills de un plugin se invocan con espacio de nombres (`/fabrica:x`) y sus agentes ignoran
@@ -127,3 +143,29 @@ Detalle técnico: `curso/investigacion/fabrica-p1-generalidad.md` (en el repo de
 ## Identidad de los commits
 Este repo se publicará como `tarritoai/…`: los commits van siempre como `tarritoai <noreply@tarritoai.invalid>`
 (configurado en local con `git config user.name/user.email`).
+
+## La nave 2D (`plantilla-2d/`)
+
+Probarla desde `plantilla-2d/` (necesita ffmpeg, Node y, para comprobar, whisper con su modelo):
+
+```bash
+uv sync && (cd remotion && npm ci)
+uv run reels doctor
+uv run reels humo                     # 6 s, gratis (voz en caché)
+uv run reels ejemplo quijote-gafas    # el ejemplo entero, gratis (voces ya pagadas, en assets/ejemplos/…/voz/)
+uv run --group dev pytest -q
+```
+
+- **Contrato**: `reels/schema.py`. Un beat = una frase de una voz; puede abrir un plano (fondo + actores); los eventos
+  (`act`, `reveal`, `enter`, `move`, `stamp`, `count`…) cuelgan de una **palabra** de su frase. Nada de segundos a mano.
+- **Voz**: tramos seguidos de una misma voz = una toma (`/text-to-speech/{voz}/with-timestamps`, eleven_v4), caché
+  por hash del payload (la misma clave que el prototipo: el ejemplo sale gratis), pausas apretadas + tempo sin
+  cambiar el tono (rubberband si ffmpeg lo trae, si no atempo); las cifras se dicen con letras y se ven con cifras.
+- **Dibujo**: un `Reel` genérico (`remotion/src/kit/Reel.tsx`) dibuja cualquier `timeline.json`; las piezas propias de
+  una historia van en `remotion/src/episodios/<slug>/` y cada episodio tiene su propia entrada de Remotion
+  (`src/generado/<slug>.ts`): un dibujo roto en un episodio no rompe otro.
+- **Compartido con la 3D**: `reels/system.py`, `reels/cost.py`, el comprobador del curso y varios trabajadores son
+  idénticos en las dos plantillas; `tests/test_instalador.py` falla si se separan.
+- **Estilo**: «papel recortado» (sombra dura sin difuminar, línea de tinta, rótulos en tiras de papel, etiquetas de
+  cartón, contador de rodillo, sellos gastados); paletas `alfar` y `tinta` como datos (`kit/style.ts`).
+- Diseño, uso y límites: `curso/revisiones/fabrica-2d.md` (en el repo del curso).

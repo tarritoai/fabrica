@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run reels doctor:*)",
+      "Bash(uv run reels lint:*)",
+      "Bash(uv run reels build:*)",
+      "Bash(uv run reels stills:*)",
+      "Bash(uv run reels render:*)",
+      "Bash(uv run reels check:*)",
+      "Bash(uv run reels sheet:*)",
+      "Bash(uv run reels cover:*)",
+      "Bash(uv run reels carousel:*)",
+      "Bash(uv run reels personaje:*)",
+      "Bash(uv run reels piezas:*)",
+      "Bash(uv run reels review:*)",
+      "Bash(uv run reels calibrate:*)",
+      "Bash(uv run reels humo:*)",
+      "Bash(uv run reels ejemplo:*)",
+      "Bash(uv run reels voice-search:*)",
+      "Bash(uv run reels voice-save:*)",
+      "Bash(uv run reels voice-use:*)",
+      "Bash(uv run reels ref:*)",
+      "Bash(uv run reels voice * --estimar)",
+      "Bash(uv run python .claude/skills/tarrito/comprobar.py:*)",
+      "Bash(uv run python .claude/skills/numeros/numeros.py:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "ask": [
+      "Bash(uv run reels voice:*)",
+      "Bash(uv run reels voice-design:*)",
+      "Bash(uv run reels voice-try:*)",
+      "Bash(uv run reels voice-act:*)",
+      "Bash(uv run reels music-gen:*)",
+      "Bash(uv run reels sfx-gen:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 ---
 name: instalar
-description: Instala la fábrica de reels del curso en este ordenador (Windows 10/11, Mac con chip Apple o Linux) sin contraseñas de administrador, y termina con un primer vídeo de prueba gratis. Úsala cuando el alumno escriba /fabrica:instalar, pida instalar o reparar la fábrica, o diga que acaba de instalar el plugin.
-argument-hint: "[carpeta donde quieres tu fábrica]"
+description: Instala la fábrica de reels del curso en este ordenador (Windows 10/11, Mac con chip Apple o Linux) sin contraseñas de administrador, y termina con un primer vídeo de prueba gratis. Con «2d» instala en su lugar la fábrica 2D «¿Y si…?» (ver la skill nave). Úsala cuando el alumno escriba /fabrica:instalar, pida instalar o reparar la fábrica, o diga que acaba de instalar el plugin.
+argument-hint: "[2d] [carpeta donde quieres tu fábrica]"
 allowed-tools:
   - Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/fabrica.sh" *)
   - Bash(powershell -NoProfile -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/fabrica.ps1" *)
@@ -62,6 +62,13 @@ Explícaselo en llano y, si hace falta más detalle, busca el `<código>` (colum
 `${CLAUDE_PLUGIN_ROOT}/skills/tarrito/errores-conocidos.md`.
 
 ## Pasos
+
+### ¿3D o 2D?
+Esta skill instala **la fábrica 3D del curso** (Blender). Si el alumno pide la fábrica **2D** («¿Y si…?», la «nave
+de enfrente»: escribió `2d` en `$ARGUMENTS`, o la pide con palabras), lee
+`${CLAUDE_PLUGIN_ROOT}/skills/nave/SKILL.md` y sigue esos pasos en su lugar. Si no dice nada, es la 3D: no preguntes.
+Si en el paso 1 su computadora no sirve para la 3D (p. ej. Linux en ARM), dile que la 2D no necesita Blender y
+ofrécesela (`/fabrica:nave`).
 
 ### 0. Bienvenida (no ejecutes nada todavía)
 En 3–4 líneas: vamos a montar tu fábrica; tarda entre 30 y 60 minutos (casi todo es esperar descargas, unos 1,5 GB; ocupará unos 3,5 GB);

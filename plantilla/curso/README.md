@@ -7,3 +7,4 @@ Lo del curso «La Fábrica» dentro de tu fábrica.
 - `ejercicios/` — tus ejercicios (hoja de feedback, fotograma 0, escalera, de taza a gente). Pídele a Claude que
   los guarde ahí.
 - `plan-7-dias.md` — tu plan de la primera semana (lote 12·1).
+- `encargo-plantilla.md` — la página de encargo de una fábrica nueva (lote A·1: cópiala a `ejercicios/encargo.md`).

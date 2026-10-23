@@ -53,7 +53,12 @@ def norm(text: str) -> str:
 
 
 def lot_id(text: str) -> str:
-    parts = [p.lstrip("0") or "0" for p in re.split(r"[·.\-,_ ]+", text.strip()) if p]
+    """'5.2', '05-2', 'lote 5·2' → '5·2'; 'a.1', 'A1', 'a-1' → 'A·1' (the lots of a module have a letter)."""
+    text = re.sub(r"^\s*lote\s+", "", text.strip(), flags=re.I)
+    m = re.fullmatch(r"([A-Za-z])\s*[·.\-,_ ]?\s*(\d+)", text)
+    if m:
+        return f"{m.group(1).upper()}·{int(m.group(2))}"
+    parts = [p.lstrip("0") or "0" for p in re.split(r"[·.\-,_ ]+", text) if p]
     return "·".join(parts)
 
 
@@ -381,9 +386,59 @@ TYPES = {"archivo": c_archivo, "video": c_video, "doctor": c_doctor, "json": c_j
          "comando": c_comando}
 
 
+# --- the other factory («nave») --------------------------------------------------------------------------------------
+# A course can have two factories side by side: the 3D one and the 2D one («la nave de enfrente»). A check can look
+# in either: "en": "3d" | "2d" | "cualquiera" (default: this one). Where the other one is: .fabrica/naves.json
+# (written by the installer), else a sibling folder whose .fabrica/plantilla.json says its «tipo».
+
+HOME = ROOT
+
+
+def kind_of(root: Path) -> str:
+    try:
+        tipo = json.loads((root / ".fabrica" / "plantilla.json").read_text(encoding="utf-8")).get("tipo")
+    except (OSError, ValueError):
+        tipo = None
+    return tipo or ("2d" if (root / "remotion" / "src" / "kit").is_dir() else "3d")
+
+
+def factories() -> dict[str, Path]:
+    """{'3d': path, '2d': path} of the factories this computer has (this one always included)."""
+    out = {kind_of(HOME): HOME}
+    try:
+        known = json.loads((HOME / ".fabrica" / "naves.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        known = {}
+    for k, v in (known or {}).items():
+        if k not in out and isinstance(v, str) and (Path(v) / ".claude").is_dir():
+            out[k] = Path(v)
+    try:
+        siblings = sorted(p for p in HOME.parent.iterdir() if p.is_dir() and p != HOME)
+    except OSError:
+        siblings = []
+    for p in siblings:
+        if (p / ".fabrica" / "plantilla.json").exists() and kind_of(p) not in out:
+            out[kind_of(p)] = p
+    return out
+
+
+def _roots(where: str | None) -> list[Path]:
+    if not where or where == "aqui":
+        return [HOME]
+    found = factories()
+    if where == "cualquiera":
+        return [HOME] + [p for p in found.values() if p != HOME]
+    return [found[where]] if where in found else []
+
+
+NO_NAVE = {"2d": "Todavía no encuentro tu nave 2D: instálala con /fabrica:nave (o ábrela y comprueba desde allí).",
+           "3d": "No encuentro tu fábrica 3D: comprueba este lote desde su carpeta."}
+
+
 # --- main ------------------------------------------------------------------------------------------------------------
 
 def evaluate(lot: dict, cfg: dict, stamps: dict, answer: str | None) -> list[str]:
+    global ROOT
     problems = []
     for s in lot["comprobaciones"]:
         kind = s["tipo"]
@@ -392,7 +447,21 @@ def evaluate(lot: dict, cfg: dict, stamps: dict, answer: str | None) -> list[str
         elif kind == "lotes":
             r = c_lotes(s, cfg, stamps)
         else:
-            r = TYPES[kind](s, cfg)
+            roots = _roots(s.get("en"))
+            if not roots:
+                r = NO_NAVE.get(s.get("en"), s["falta"])
+            else:
+                r = None
+                for i, root in enumerate(roots):
+                    ROOT = root
+                    try:
+                        got = TYPES[kind](s, cfg)
+                    finally:
+                        ROOT = HOME
+                    if not got:
+                        r = None
+                        break
+                    r = r or got
         if r:
             problems.append(r)
     return problems
@@ -463,6 +532,13 @@ def main() -> int:
     stamps = load_stamps()
 
     if a.estado:
+        for root in factories().values():  # the other factory's stamps count too (read only)
+            if root != HOME:
+                try:
+                    other = json.loads((root / "curso" / "progreso.json").read_text(encoding="utf-8")).get("sellos") or {}
+                except (OSError, ValueError):
+                    other = {}
+                stamps = {**other, **stamps}
         done = sum(1 for lot in lots if lot["lote"] in stamps)
         print(f"Sellos: {done} de {len(lots)}")
         for lot in lots:
@@ -475,7 +551,7 @@ def main() -> int:
         lid = lot_id(wanted)
         lot = next((x for x in lots if x["lote"] == lid), None)
         if not lot:
-            print(f"No conozco el lote «{wanted}». Los lotes van de 0·1 a {lots[-1]['lote']}.")
+            print(f"No conozco el lote «{wanted}». Los que hay: {', '.join(x['lote'] for x in lots[:3])} … {lots[-1]['lote']}.")
             return 2
         problems = evaluate(lot, cfg, stamps, a.respuesta)
         show(lot, problems)

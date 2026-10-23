@@ -1,8 +1,8 @@
 {
   "name": "fabrica",
   "displayName": "La fábrica",
-  "version": "0.1.5",
-  "description": "Instala tu fábrica de reels sin permisos de administrador (/fabrica:instalar), te ayuda cuando algo falla (/fabrica:tarrito) y la mantiene al día sin tocar tu memoria (/fabrica:actualizar).",
+  "version": "0.2.0",
+  "description": "Instala tu fábrica de reels sin permisos de administrador (/fabrica:instalar), abre la segunda, la 2D «¿Y si…?» sin Blender ni gráfica (/fabrica:nave), te ayuda cuando algo falla (/fabrica:tarrito) y las mantiene al día sin tocar tu memoria (/fabrica:actualizar).",
   "author": {
     "name": "tarritoai",
     "url": "https://github.com/tarritoai"
@@ -10,5 +10,5 @@
   "homepage": "https://github.com/tarritoai/fabrica",
   "repository": "https://github.com/tarritoai/fabrica",
   "license": "MIT",
-  "keywords": ["curso", "reels", "video", "blender", "remotion", "espanol"]
+  "keywords": ["curso", "reels", "video", "blender", "remotion", "2d", "espanol"]
 }

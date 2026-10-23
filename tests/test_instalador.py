@@ -351,7 +351,7 @@ def test_comprobaciones_de_la_plantilla_son_validas():
     spec.loader.exec_module(mod)
     data = json.loads((RAIZ / "plantilla" / "curso" / "comprobaciones.json").read_text(encoding="utf-8"))
     lotes = {x["lote"]: x for x in data["lotes"]}
-    assert len(data["lotes"]) == len(lotes) == 50
+    assert len(data["lotes"]) == len(lotes) == 55  # 50 lessons + the module «La nave de enfrente» (A·1–A·5)
     tipos = set(mod.TYPES) | {"pregunta", "lotes"}
     for lote, info in lotes.items():
         assert comprobar.normalizar(lote) == mod.lot_id(lote) == lote
@@ -362,6 +362,7 @@ def test_comprobaciones_de_la_plantilla_son_validas():
     assert [c["tipo"] for c in lotes["1·4"]["comprobaciones"]] == ["archivo", "doctor"]
     assert [c["tipo"] for c in lotes["1·5"]["comprobaciones"]] == ["video"]
     assert set(comprobar.ANTES_DE_INSTALAR) <= set(lotes)
+    assert [x["lote"] for x in data["lotes"]].index("A·1") == [x["lote"] for x in data["lotes"]].index("10·3") + 1
 
 
 # --- known errors ----------------------------------------------------------------------------------------------------
@@ -497,3 +498,107 @@ def test_uv_queda_en_el_path_de_terminales_nuevas_sin_duplicar(tmp_path):
     texto = (home / ".bashrc").read_text(encoding="utf-8")
     assert texto.count("La Fabrica: uv") == 1 and 'export PATH="$HOME/.local/bin:$PATH"' in texto
     assert "alias ll='ls -l'\nexport PATH" in texto
+
+
+# --- the 2D factory («la nave de enfrente») ---------------------------------------------------------------------------
+
+
+def test_localizar_las_dos_plantillas():
+    p3, _ = plantilla.localizar(descargar_si_falta=False)
+    p2, v2 = plantilla.localizar(descargar_si_falta=False, tipo="2d")
+    assert p3.name == "plantilla" and p2.name == "plantilla-2d"
+    assert (p2 / "remotion" / "src" / "kit").is_dir() and not (p3 / "remotion" / "src" / "kit").exists()
+    assert v2 == comun.version_plugin()
+
+
+def test_preparar_la_nave_al_lado_de_la_fabrica(tmp_path, monkeypatch):
+    monkeypatch.setenv("FABRICA_CACHE", str(tmp_path / "cache"))
+    fab, nave = tmp_path / "fabrica", tmp_path / "nave-2d"
+    assert fabrica.main(["preparar", "--proyecto", str(fab)]) == 0
+    assert fabrica.main(["preparar", "--tipo", "2d", "--proyecto", str(nave)]) == 0
+    assert plantilla.tipo_de(fab) == "3d" and plantilla.tipo_de(nave) == "2d"
+    assert (nave / "remotion" / "src" / "kit" / "Reel.tsx").exists() and not (nave / "blender").exists()
+    assert json.loads((nave / ".fabrica" / "naves.json").read_text(encoding="utf-8")) == {"3d": str(fab)}
+    assert json.loads((fab / ".fabrica" / "naves.json").read_text(encoding="utf-8")) == {"2d": str(nave)}
+    # a 2D in the 3D folder is refused (one factory per folder)
+    assert fabrica.main(["preparar", "--tipo", "2d", "--proyecto", str(fab)]) == 1
+    # the update of a 2D project uses the 2D template: nothing to do right after installing
+    plan = plantilla.planificar(plantilla.localizar(tipo="2d")[0], nave)
+    assert not plan["nuevos"] and not plan["actualizar"] and not plan["conflictos"]
+
+
+def test_la_nave_no_pide_blender_ni_rhubarb():
+    assert herramientas.orden("2d") == ["ffmpeg", "whisper", "modelo", "node"]
+    assert "blender" in herramientas.orden("3d")
+    datos = fabrica.info_sistema("2d")
+    assert not [b for b in datos["bloqueos"] if "Blender" in b]
+
+
+def test_la_nave_reutiliza_herramientas_y_modelo(tmp_path, monkeypatch):
+    monkeypatch.setenv("FABRICA_CACHE", str(tmp_path / "cache"))
+    fab, nave = tmp_path / "fabrica", tmp_path / "nave-2d"
+    for p in (fab, nave):
+        (p / ".fabrica").mkdir(parents=True)
+        (p / ".fabrica" / "plantilla.json").write_text("{}", encoding="utf-8")
+    spec = herramientas.specs()["ffmpeg"]
+    binario = fab / "tools" / spec.carpeta / spec.binario
+    binario.parent.mkdir(parents=True)
+    binario.write_text("#!/bin/sh\necho ffmpeg version 9\n", encoding="utf-8")
+    binario.chmod(0o755)
+    herramientas._guardar_registro(fab, {"ffmpeg": {"version": spec.version, "bin": binario.relative_to(fab).as_posix(),
+                                                    "env": {"FFMPEG_BIN": binario.relative_to(fab).as_posix()}}})
+    modelo = fab / "models" / "ggml-small.bin"
+    modelo.parent.mkdir(parents=True)
+    with modelo.open("wb") as fh:
+        fh.truncate(herramientas.MODEL_SIZE)
+    plantilla.registrar(fab, "3d")
+    plantilla.registrar(nave, "2d")
+    monkeypatch.setattr(herramientas, "probar", lambda clave, b: (b.exists(), "ok"))
+    assert herramientas.reutilizar("ffmpeg", nave)
+    assert (nave / "tools" / spec.carpeta / spec.binario).exists()
+    assert herramientas._registro(nave)["ffmpeg"]["env"]["FFMPEG_BIN"].startswith("tools/")
+    assert herramientas.reutilizar("modelo", nave)
+    assert (nave / "models" / "ggml-small.bin").stat().st_size == herramientas.MODEL_SIZE
+    assert not herramientas.reutilizar("node", nave)  # the 3D one has no Node registered here: download it
+
+
+def test_clave_se_copia_sin_mostrarla(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("FABRICA_CACHE", str(tmp_path / "cache"))
+    fab, nave = tmp_path / "fabrica", tmp_path / "nave-2d"
+    assert fabrica.main(["preparar", "--proyecto", str(fab)]) == 0
+    assert fabrica.main(["preparar", "--tipo", "2d", "--proyecto", str(nave)]) == 0
+    (fab / ".env").write_text("ELEVENLABS_API_KEY=sk_secreta_123\nVAST_API_KEY=otra\n", encoding="utf-8")
+    capsys.readouterr()
+    assert fabrica.main(["clave", "--proyecto", str(nave)]) == 0
+    out = capsys.readouterr().out
+    assert "sk_secreta_123" not in out
+    texto = (nave / ".env").read_text(encoding="utf-8")
+    assert "ELEVENLABS_API_KEY=sk_secreta_123" in texto and "VAST_API_KEY" not in texto
+
+
+def test_normalizar_lotes_con_letra():
+    assert comprobar.normalizar("a.1") == comprobar.normalizar("A1") == comprobar.normalizar("lote a-1") == "A·1"
+    assert comprobar.normalizar("1.5") == "1·5"
+
+
+COMPARTIDOS = ["reels/system.py", "reels/cost.py", ".claude/skills/tarrito/comprobar.py", ".claude/skills/tarrito/SKILL.md",
+               ".claude/skills/numeros/numeros.py", ".claude/skills/numeros/SKILL.md", ".claude/agents/espectador.md",
+               ".claude/agents/analista.md", "reels/instagram.py", "reels/calibrate.py", "docs/publico.md", "docs/criticos.md",
+               "docs/hipotesis.md", "docs/decisiones.md", ".python-version", "curso/encargo-plantilla.md"]
+
+
+@pytest.mark.parametrize("rel", COMPARTIDOS)
+def test_lo_compartido_es_identico_en_las_dos_plantillas(rel):
+    """One source of truth: what both factories share must not drift apart (edit it in both, or copy it over)."""
+    a = (RAIZ / "plantilla" / rel).read_bytes()
+    b = (RAIZ / "plantilla-2d" / rel).read_bytes()
+    assert a == b, f"{rel} es distinto en plantilla/ y plantilla-2d/"
+
+
+def test_el_zip_sin_git_lleva_las_dos_plantillas(tmp_path):
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("empaquetar", RAIZ / "tools" / "empaquetar.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert "plantilla-2d" in (RAIZ / "tools" / "empaquetar.py").read_text(encoding="utf-8")

@@ -32,9 +32,12 @@ RUTA_MAXIMA = 120  # same limit as the project's «carpeta» check
 
 
 def normalizar(lote: str) -> str:
-    """'1.5', '1-5', '1,5', '01-5', 'lote 1·5' → '1·5'."""
+    """'1.5', '1-5', '1,5', '01-5', 'lote 1·5' → '1·5'; 'a.1', 'A1', 'lote a-1' → 'A·1' (module lots)."""
     m = re.search(r"(\d+)\s*[·.\-,:_ ]\s*(\d+)", lote)
-    return f"{int(m.group(1))}·{int(m.group(2))}" if m else lote.strip()
+    if m:
+        return f"{int(m.group(1))}·{int(m.group(2))}"
+    m = re.search(r"\b([A-Za-z])\s*[·.\-,:_ ]?\s*(\d+)\b", re.sub(r"^\s*lote\s+", "", lote.strip(), flags=re.I))
+    return f"{m.group(1).upper()}·{int(m.group(2))}" if m else lote.strip()
 
 
 def hay_proyecto(proyecto: Path) -> bool:

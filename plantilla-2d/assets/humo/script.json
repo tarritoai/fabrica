@@ -1,0 +1,38 @@
+{
+ "slug": "humo",
+ "title": "Prueba de humo 2D",
+ "premise": "La fábrica 2D se prueba a sí misma: voz ya grabada, dibujo, montaje y comprobación, sin gastar nada.",
+ "tone": "comedia",
+ "series": "¿Y SI…?",
+ "work": "PRUEBA DE HUMO",
+ "voices": {"narrador": {"voice_id": "4L2A19qwD3pMcNlt484F", "name": "Enzo - Viral Videos, Reels and Shorts"}},
+ "pace": {"max_pause": 0.16, "tempo": 1.12, "lead": 0.1, "hook_alone": false},
+ "counter": {"label": "REELS HECHOS", "kind": "rodillo", "start": 0, "from_beat": 2},
+ "title_card": {"lines": ["¿Y SI TU COMPUTADORA", "SUPIERA DIBUJAR?"], "highlight": ["dibujar"]},
+ "tags_from_beat": 2,
+ "beats": [
+  {
+   "id": 1, "voice": "narrador", "line": "¿Y si tu computadora supiera dibujar?", "highlight": ["dibujar"],
+   "shot": {
+    "scene": "Interior", "options": {"patron": "rayas", "ventana": true, "vista": "dia"}, "camera": {"zoom": 0.05, "focus": [540, 1100]},
+    "actors": [
+     {"id": "persona", "piece": "Persona", "x": 330, "y": 1460, "scale": 1.45, "props": {"expresion": "sorpresa", "pelo": "rizos", "pelo_color": "pelos.2", "color": "turquesa", "piel": "pieles.2"}},
+     {"id": "taza", "piece": "Cosa", "x": 780, "y": 1460, "scale": 1.0, "props": {"forma": "taza", "color": "naranja", "expresion": "picaro", "mira": -1}}
+    ]
+   },
+   "events": [
+    {"type": "act", "at": "dibujar", "actor": "taza", "props": {"pose": "saluda", "expresion": "alegre"}}
+   ]
+  },
+  {
+   "id": 2, "voice": "narrador", "line": "Pues dibuja. Tu fábrica funciona.", "highlight": ["funciona"],
+   "events": [
+    {"type": "act", "at": "pues", "actor": "persona", "props": {"expresion": "risa", "pose": "brazos_arriba"}},
+    {"type": "stamp", "at": "funciona", "delay": 0.1, "text": "FUNCIONA", "x": 740, "y": 930, "rot": -7},
+    {"type": "count", "at": "funciona", "value": 1}
+   ]
+  }
+ ],
+ "ending": {"seconds": 1.2},
+ "post": "Prueba de humo de la fábrica 2D: si ves esto, tu computadora ya dibuja reels."
+}

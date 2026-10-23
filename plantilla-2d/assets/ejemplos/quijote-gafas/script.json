@@ -1,0 +1,142 @@
+{
+ "slug": "quijote-gafas",
+ "title": "¿Y si Don Quijote llevara gafas?",
+ "premise": "Con gafas, don Quijote ve las cosas como son: ni gigantes, ni castillos, ni Dulcinea. Sin locuras no hay libro, así que Sancho le quita las gafas.",
+ "tone": "comedia",
+ "tests": [],
+ "series": "¿Y SI…?",
+ "work": "DON QUIJOTE",
+ "palette": "alfar",
+ "voices": {
+  "narrador": {"voice_id": "4L2A19qwD3pMcNlt484F", "name": "Enzo - Viral Videos, Reels and Shorts"},
+  "sancho": {"voice_id": "HMCmDsbKeaSZp5LMOYKR", "name": "Johnny The Rogue"},
+  "quijote": {"voice_id": "orF2qy9215xjwqqxqsWW", "name": "Rafael (luces)"}
+ },
+ "pace": {"max_pause": 0.16, "tempo": 1.14, "gap": 0.3, "lead": 0.1, "hook_alone": false},
+ "counter": {"label": "LOCURAS EVITADAS", "kind": "rodillo", "start": 0, "from_beat": 2},
+ "title_card": {"lines": ["DON QUIJOTE", "CON GAFAS"], "highlight": ["gafas"]},
+ "tags_from_beat": 2,
+ "music": {"track": "clips/quijote-guitarra.mp3", "volume": 0.17},
+ "beats": [
+  {
+   "id": 1, "voice": "narrador", "line": "¿Y si Don Quijote llevara gafas?", "highlight": ["gafas"],
+   "shot": {
+    "scene": "Trama", "options": {"color": "ocre"}, "camera": {"zoom": 0.06, "focus": [540, 1100]},
+    "actors": [
+     {"id": "quijote", "piece": "Quijote", "x": 540, "y": 2080, "scale": 2.35, "props": {"expresion": "serio", "gafas": 0, "lanza": false, "mira": 0}}
+    ]
+   },
+   "events": [
+    {"type": "act", "at": "gafas", "delay": -0.1, "actor": "quijote", "props": {"gafas": 1, "expresion": "ilusion"}},
+    {"type": "sfx", "at": "gafas", "delay": 0.1, "sound": "destello", "volume": 0.55}
+   ]
+  },
+  {
+   "id": 2, "voice": "narrador", "line": "Ve un gigante… y es un molino. Locuras evitadas: una.", "highlight": ["gigante", "molino", "una"],
+   "shot": {
+    "scene": "LaMancha", "options": {"molinos": false},
+    "actors": [
+     {"id": "gigante", "piece": "Gigante", "x": 780, "y": 1250, "scale": 1.25},
+     {"id": "quijote", "piece": "Quijote", "x": 300, "y": 1420, "scale": 1.3, "props": {"expresion": "ilusion", "gafas": 1, "mira": 1, "brazo": 0.6}}
+    ]
+   },
+   "events": [
+    {"type": "reveal", "at": "molino", "delay": -0.1, "actor": "gigante", "piece": "Molino", "scale": 1.2},
+    {"type": "act", "at": "molino", "delay": -0.1, "actor": "quijote", "props": {"expresion": "decepcion", "brazo": 0}},
+    {"type": "stamp", "at": "molino", "delay": 0.15, "text": "MOLINO", "x": 770, "y": 900, "rot": -8},
+    {"type": "count", "at": "una", "value": 1}
+   ]
+  },
+  {
+   "id": 3, "voice": "narrador", "line": "Ve un castillo… y es una venta. Dos.", "highlight": ["castillo", "venta", "dos"],
+   "shot": {
+    "scene": "LaMancha", "options": {"hora": "tarde"},
+    "actors": [
+     {"id": "castillo", "piece": "Castillo", "x": 770, "y": 1250, "scale": 0.92},
+     {"id": "quijote", "piece": "Quijote", "x": 280, "y": 1420, "scale": 1.3, "props": {"expresion": "ilusion", "gafas": 1, "mira": 1, "brazo": 0.35}}
+    ]
+   },
+   "events": [
+    {"type": "reveal", "at": "venta", "delay": -0.1, "actor": "castillo", "piece": "Venta", "scale": 0.85},
+    {"type": "act", "at": "venta", "delay": -0.1, "actor": "quijote", "props": {"expresion": "decepcion", "brazo": 0}},
+    {"type": "stamp", "at": "venta", "delay": 0.15, "text": "VENTA", "x": 770, "y": 880, "rot": 6},
+    {"type": "count", "at": "dos", "value": 2}
+   ]
+  },
+  {
+   "id": 4, "voice": "narrador", "line": "Ve a su amada Dulcinea… y es Aldonza, con un saco de estiércol. Tres.", "highlight": ["dulcinea", "estiércol", "tres"],
+   "shot": {
+    "scene": "LaMancha", "options": {"loma": "#BFCB92", "loma_cerca": "#A6B672"},
+    "actors": [
+     {"id": "dulcinea", "piece": "Persona", "x": 760, "y": 1420, "scale": 1.3,
+      "props": {"ropa": "vestido", "color": "rosa", "pelo": "largo", "pelo_color": "pelos.3", "sombrero": "corona", "expresion": "alegre", "gag": "corazones", "mira": -1}},
+     {"id": "quijote", "piece": "Quijote", "x": 270, "y": 1420, "scale": 1.3, "props": {"expresion": "ilusion", "gafas": 1, "mira": 1}}
+    ]
+   },
+   "events": [
+    {"type": "reveal", "at": "aldonza", "delay": -0.1, "actor": "dulcinea", "piece": "Persona",
+     "props": {"ropa": "vestido", "color": "rojo", "color2": "kraft", "pelo": "coleta", "pelo_color": "pelos.1", "piel": "pieles.1", "sombrero": "pañuelo", "sombrero_color": "ocre", "cuerpo": "ancho", "sostiene": "saco", "pose": "saluda", "expresion": "alegre", "gag": "moscas"}},
+    {"type": "act", "at": "aldonza", "delay": -0.1, "actor": "quijote", "props": {"expresion": "decepcion", "lanza": true}},
+    {"type": "stamp", "at": "aldonza", "delay": 0.15, "text": "ALDONZA", "x": 740, "y": 690, "rot": -5},
+    {"type": "count", "at": "tres", "value": 3}
+   ]
+  },
+  {
+   "id": 5, "voice": "narrador", "line": "Sin locuras no hay libro. Así que Sancho hace lo único sensato:", "highlight": ["libro", "sancho"],
+   "shot": {
+    "scene": "LaMancha", "camera": {"zoom": 0.04},
+    "actors": [
+     {"id": "quijote", "piece": "Quijote", "x": 300, "y": 1420, "scale": 1.3, "props": {"expresion": "decepcion", "gafas": 1, "mira": 0.2}},
+     {"id": "sancho", "piece": "Persona", "x": 800, "y": 1420, "scale": 1.3, "voice": "sancho",
+      "props": {"cuerpo": "ancho", "ropa": "tunica", "color": "verde", "color2": "ocre", "sombrero": "gorro", "sombrero_color": "madera", "barba": "tres_dias", "piel": "pieles.1", "expresion": "aburrido", "mira": 0, "hacia": -1}},
+     {"id": "libro", "piece": "Libro", "x": 560, "y": 800, "scale": 0.7, "hidden": true, "z": 2}
+    ]
+   },
+   "events": [
+    {"type": "enter", "at": "libro", "delay": -0.05, "actor": "libro", "from": "pop"},
+    {"type": "act", "at": "libro", "delay": 0.25, "actor": "libro", "props": {"tachado": 1}},
+    {"type": "act", "at": "sancho", "actor": "sancho", "props": {"expresion": "picaro", "mira": -1}}
+   ]
+  },
+  {
+   "id": 6, "voice": "sancho", "line": "Trae, que se las limpio.", "bubble": {"actor": "sancho", "width": 560},
+   "events": [
+    {"type": "exit", "at": "trae", "delay": -0.1, "actor": "libro", "to": "pop"},
+    {"type": "act", "at": "trae", "delay": -0.05, "actor": "sancho", "props": {"pose": "alcanza", "objetivo": [330, 830]}},
+    {"type": "act", "at": "las", "actor": "quijote", "props": {"gafas": 0, "expresion": "serio", "mira": 1}},
+    {"type": "act", "at": "las", "actor": "sancho", "props": {"sostiene": "gafas"}},
+    {"type": "act", "at": "limpio", "actor": "sancho", "props": {"pose": "sujeta", "expresion": "alegre"}}
+   ]
+  },
+  {
+   "id": 7, "voice": "quijote", "line": "¡Gigantes!", "bubble": {"actor": "quijote", "shout": true, "width": 720},
+   "shot": {
+    "scene": "Trama", "options": {"color": "naranja"}, "camera": {"zoom": 0.1, "focus": [540, 1150]},
+    "actors": [
+     {"id": "quijote", "piece": "Quijote", "x": 540, "y": 2080, "scale": 2.35, "voice": "quijote", "props": {"expresion": "loco", "gafas": 0, "lanza": false, "mira": 0}}
+    ]
+   },
+   "events": [
+    {"type": "count_break", "at": "inicio", "delay": 0.2},
+    {"type": "shake", "at": "inicio", "delay": 0.1, "strength": 0.8}
+   ]
+  }
+ ],
+ "ending": {
+  "seconds": 1.6,
+  "shot": {
+   "scene": "LaMancha", "options": {"molinos": false}, "camera": {"zoom": 0.03},
+   "actors": [
+    {"id": "molino", "piece": "Molino", "x": 860, "y": 1250, "scale": 1.0},
+    {"id": "quijote", "piece": "Quijote", "x": 150, "y": 1420, "scale": 1.2, "rot": 14, "props": {"expresion": "loco", "gafas": 0, "brazo": 1, "mira": 1}}
+   ]
+  },
+  "events": [
+   {"type": "move", "delay": 0.0, "actor": "quijote", "x": 480, "seconds": 0.9},
+   {"type": "stamp", "delay": 0.33, "text": "CAPÍTULO I", "x": 540, "y": 1560, "rot": -6, "size": 110}
+  ],
+  "question": "¿TÚ SE LAS HABRÍAS QUITADO?",
+  "question_delay": 0.6
+ },
+ "post": "Con gafas, el Quijote habría durado una página. ¿Tú se las habrías quitado?"
+}

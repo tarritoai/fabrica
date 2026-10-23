@@ -1,5 +1,6 @@
 """Build dist/fabrica-plugin.zip: the plugin folder WITH the template inside (fabrica/plantilla/), for the install
-route that needs no git (an `archive` source; see .claude-plugin/marketplace-sin-git.json). The zip holds one top
+route that needs no git (an `archive` source; see .claude-plugin/marketplace-sin-git.json), with both templates
+(fabrica/plantilla/ and fabrica/plantilla-2d/). The zip holds one top
 folder, `fabrica/`, which Claude Code accepts as the plugin root ("at the top of the zip or one directory down").
 
     python tools/empaquetar.py            # → dist/fabrica-plugin.zip and its .sha256
@@ -36,8 +37,9 @@ def main() -> int:
     with zipfile.ZipFile(salida, "w") as zf:
         for rel, p in sorted(archivos(RAIZ / "plugin").items()):
             _meter(zf, p, f"fabrica/{rel}")
-        for rel, p in sorted(archivos(RAIZ / "plantilla").items()):
-            _meter(zf, p, f"fabrica/plantilla/{rel}")
+        for carpeta in ("plantilla", "plantilla-2d"):  # the 3D factory and the 2D one («la nave de enfrente»)
+            for rel, p in sorted(archivos(RAIZ / carpeta).items()):
+                _meter(zf, p, f"fabrica/{carpeta}/{rel}")
     sha = hashlib.sha256(salida.read_bytes()).hexdigest()
     (dist / "fabrica-plugin.zip.sha256").write_text(f"{sha}  fabrica-plugin.zip\n", encoding="utf-8")
     print(f"{salida} ({salida.stat().st_size / 1e6:.1f} MB) sha256 {sha}")

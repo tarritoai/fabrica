@@ -1,0 +1,73 @@
+# Secrets (yes, the irony is intended)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node / Remotion
+node_modules
+remotion/out/
+remotion/.remotion/
+remotion/src/generado/
+
+# Local binaries and models (big, downloaded by the installer / `reels descargar-modelo`)
+models
+tools/
+
+# Episodes: only the script and its paper trail are versioned (voices, frames and videos are regenerated)
+episodes/*/*
+!episodes/*/script.json
+!episodes/*/estado.md
+!episodes/*/critica.md
+!episodes/*/guion-v*.md
+!episodes/README.md
+# The smoke test and the examples are regenerated from assets/
+episodes/humo/
+episodes/quijote-gafas/
+
+# References: other people's reels never go to git
+references/*
+!references/README.md
+!references/patterns.md
+!references/visto.md
+
+# Loose media
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.png
+*.jpg
+# ...except the template's own: sound effects, the example's music and voices, the paper texture, fonts
+!assets/sfx/*.wav
+!assets/music/clips/quijote-guitarra.mp3
+!assets/humo/voz/*.mp3
+!assets/ejemplos/*/voz/*.mp3
+!remotion/src/kit/papel.png
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local caches (voices cost money: never delete casually)
+.cache/
+
+# Ready-to-upload folders, sheets and logs stay local
+publicar/
+hojas/
+logs/
+personajes/*/hoja.png
+metrics/comments.jsonl
+
+# Backups and proposals of /fabrica:actualizar
+.fabrica/copias/
+.fabrica/actualizacion-*/
+.fabrica/en-marcha.lock

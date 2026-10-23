@@ -1,11 +1,12 @@
 {
- "_ayuda": "Una comprobación por lote del temario v2: la ÚNICA fuente de verdad de los entregables. La lee .claude/skills/tarrito/comprobar.py: dentro de tu fábrica, /tarrito comprobar [lote]; antes de instalar, /fabrica:tarrito comprobar (que, si la fábrica ya existe, delega en ese mismo script). Tipos: archivo, video, json, jsonl, sin_huecos, items, titulos, contiene, no_contiene, regex, tabla, pregunta, sistema, carpeta, sin_api_key, doctor, comando, lotes. «solo_tuyos» ignora los episodios de ejemplo (lista «ejemplos»); «sin_personajes_ejemplo» ignora los personajes que trae la plantilla (lista «personajes_ejemplo»). Sellos en curso/progreso.json.",
- "version": 2,
+ "_ayuda": "Una comprobación por lote del temario v2: la ÚNICA fuente de verdad de los entregables. La lee .claude/skills/tarrito/comprobar.py: dentro de tu fábrica, /tarrito comprobar [lote]; antes de instalar, /fabrica:tarrito comprobar (que, si la fábrica ya existe, delega en ese mismo script). Un lote puede mirar en la otra fábrica con \"en\": \"2d\" | \"3d\" | \"cualquiera\" (los lotes A·1–A·5 del módulo «La nave de enfrente»). Tipos: archivo, video, json, jsonl, sin_huecos, items, titulos, contiene, no_contiene, regex, tabla, pregunta, sistema, carpeta, sin_api_key, doctor, comando, lotes. «solo_tuyos» ignora los episodios de ejemplo (lista «ejemplos»); «sin_personajes_ejemplo» ignora los personajes que trae la plantilla (lista «personajes_ejemplo»). Sellos en curso/progreso.json.",
+ "version": 3,
  "ejemplos": [
-  "humo",
+  "cafeteria-moka",
   "ejemplo-*",
+  "humo",
   "lampara-de-las-tres",
-  "cafeteria-moka"
+  "quijote-gafas"
  ],
  "personajes_ejemplo": [
   "lucio",
@@ -916,6 +917,116 @@
     }
    ],
    "aprobado": "Uno. A la misma hora. Siempre."
+  },
+  {
+   "lote": "A·1",
+   "sala": "A",
+   "titulo": "Una fábrica es una receta",
+   "entregable": "curso/ejercicios/encargo.md: la página de encargo de tu fábrica soñada (plantilla en curso/encargo-plantilla.md)",
+   "comprobaciones": [
+    {
+     "tipo": "sin_huecos",
+     "ruta": "curso/ejercicios/encargo.md",
+     "en": "cualquiera",
+     "falta": "Tu encargo sigue con huecos <…>: rellénalo (o pídele a Claude que lo rellene contigo).",
+     "falta_archivo": "No existe curso/ejercicios/encargo.md: copia curso/encargo-plantilla.md ahí y rellénala con Claude."
+    },
+    {
+     "tipo": "contiene",
+     "ruta": "curso/ejercicios/encargo.md",
+     "en": "cualquiera",
+     "textos": [
+      "motor",
+      "voz|voces",
+      "puerta|puertas",
+      "gasto|cuesta"
+     ],
+     "falta": "Al encargo le falta lo que cambia o lo que no: motor, voz, puertas y gasto.",
+     "falta_archivo": "No existe curso/ejercicios/encargo.md: copia curso/encargo-plantilla.md ahí y rellénala con Claude."
+    }
+   ],
+   "aprobado": "Encargo escrito. Una fábrica empieza en una página."
+  },
+  {
+   "lote": "A·2",
+   "sala": "A",
+   "titulo": "Abre la nave",
+   "entregable": "la nave 2D instalada (/fabrica:nave) y su primer vídeo: episodes/humo/final.mp4 de la nave",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": ".fabrica/plantilla.json",
+     "en": "2d",
+     "falta": "Tu nave 2D no está instalada con el instalador: /fabrica:nave (lo que ya esté, no se repite)."
+    },
+    {
+     "tipo": "video",
+     "ruta": "episodes/humo/final.mp4",
+     "en": "2d",
+     "min_bytes": 100000,
+     "min_segundos": 4,
+     "falta": "No encuentro el humo de la nave 2D: dentro de la nave, /humo (gratis, menos de un minuto)."
+    }
+   ],
+   "aprobado": "La nave de enfrente tiene la luz encendida. Y es tuya."
+  },
+  {
+   "lote": "A·3",
+   "sala": "A",
+   "titulo": "Un narrador que no existe",
+   "entregable": "la voz del narrador en personajes/narrador/personaje.json de la nave 2D",
+   "comprobaciones": [
+    {
+     "tipo": "json",
+     "ruta": "personajes/narrador/personaje.json",
+     "en": "2d",
+     "campos_no_vacios": [
+      "voice.voice_id"
+     ],
+     "falta": "Tu narrador aún no tiene voz: en la nave, /personaje narrador (diseñada o de la biblioteca)."
+    }
+   ],
+   "aprobado": "El narrador tiene voz. Y nadie te la puede retirar si la has diseñado tú."
+  },
+  {
+   "lote": "A·4",
+   "sala": "A",
+   "titulo": "Tu primer «¿Y si…?»",
+   "entregable": "tu reel 2D en publicar/<slug>/ de la nave, con su texto",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "publicar/*/*.mp4",
+     "en": "2d",
+     "solo_tuyos": true,
+     "min_bytes": 300000,
+     "falta": "Aún no hay ningún reel tuyo en publicar/<slug>/ de la nave: termina /episodio allí."
+    },
+    {
+     "tipo": "archivo",
+     "ruta": "publicar/*/*.txt",
+     "en": "2d",
+     "solo_tuyos": true,
+     "falta": "Falta el texto del post en publicar/<slug>/<slug>.txt (capa 4 de /episodio)."
+    }
+   ],
+   "aprobado": "Tu primer «¿Y si…?». Misma receta, otro motor."
+  },
+  {
+   "lote": "A·5",
+   "sala": "A",
+   "titulo": "Y lo que quieras",
+   "entregable": "un carrusel de tu reel 2D (publicar/<slug>/carrusel/)",
+   "comprobaciones": [
+    {
+     "tipo": "archivo",
+     "ruta": "publicar/*/carrusel/01.jpg",
+     "en": "2d",
+     "solo_tuyos": true,
+     "falta": "No hay carrusel: en la nave, `uv run reels carousel <slug>` (gratis)."
+    }
+   ],
+   "aprobado": "Un reel, un carrusel. Lo que no esté, se pide."
   },
   {
    "lote": "11·1",

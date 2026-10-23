@@ -31,7 +31,9 @@ Hay **un solo comprobador**: el del proyecto (`.claude/skills/tarrito/comprobar.
 sellos en `curso/progreso.json`). Este paso solo lo llama, o cubre lo de antes de instalar.
 1. Busca la carpeta de la fábrica: la actual si tiene `curso/comprobaciones.json`; si no, pregunta dónde está (o
    prueba `C:\fabrica` / `~/fabrica`). Antes de instalar, la carpeta que el alumno ha elegido (aunque no exista).
-2. `FABRICA comprobar [LOTE] --proyecto "CARPETA"` (vale `1.5`, `1-5` o `1·5`; sin lote, todos los pendientes).
+2. `FABRICA comprobar [LOTE] --proyecto "CARPETA"` (vale `1.5`, `1-5` o `1·5`; los del módulo «La nave de
+   enfrente», `A.1`…`A.5` o `A·1`…; sin lote, todos los pendientes). Los lotes A·x se pueden comprobar desde la
+   fábrica 3D o desde la nave 2D: cada una encuentra a la otra.
    - **Con la fábrica instalada**, FABRICA ejecuta el comprobador del proyecto y su salida es la de
      `/tarrito comprobar`: **APROBADO** (sellado), **FALTA** (qué falta) o **PREGUNTA** (hazla tal cual, sin soplar, y
      repite con `--respuesta "LO QUE CONTESTE"`). Recuérdale que dentro de su fábrica la orden es
@@ -61,6 +63,9 @@ sellos en `curso/progreso.json`). Este paso solo lo llama, o cubre lo de antes d
 ### C) Una pantalla en inglés
 Traduce y di qué pulsar con `${CLAUDE_SKILL_DIR}/pantallas.md`. Si no está ahí, tradúcela tú y explica la opción
 segura.
+
+### D2) «Quiero la fábrica 2D» / «¿Y si…?» / lote A·2
+Es la «nave de enfrente»: `/fabrica:nave`.
 
 ### D) «¿Por dónde voy?» / «¿qué me toca?»
 `FABRICA estado --proyecto "CARPETA"` → mira `sellos` (lecciones aprobadas, de `curso/progreso.json`) y `plantilla`
